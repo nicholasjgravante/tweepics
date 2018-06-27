@@ -1,0 +1,13 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio 2017 cache/options directory
+.vs/
+
+# Config keys
+Tweepics.dll.config
+Keys.cs
+
+# Tweet data files
+tweet_data/*.txt
