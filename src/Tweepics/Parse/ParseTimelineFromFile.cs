@@ -5,11 +5,11 @@ using System.Collections.Generic;
 
 namespace Tweepics.Parse
 {
+    // Read and use tweet data from file in lieu of additional Twitter requests.
+
     public class ParseTimelineFromFile
     {
-
-        // Read and use tweet data from file in lieu of additional requests
-        public List<TweetData> Parse()
+        public List<TweetData> Parse(string fileName)
         {
             List<TweetData> tweets = new List<TweetData>();
 
@@ -17,7 +17,7 @@ namespace Tweepics.Parse
             string exePath = Environment.CurrentDirectory;
             string tweetDataFolderPath = Path.GetFullPath(Path.Combine(exePath, @"..\..\..\..\..\tweet_data"));
 
-            string text = File.ReadAllText($@"{tweetDataFolderPath}\TweetData_216776631_2018.06.22.13-19.txt");
+            string text = File.ReadAllText($@"{tweetDataFolderPath}\{fileName}");
             List<string> rawData = new List<string>();
             rawData = text.Split(" *****").ToList();
 
@@ -33,7 +33,8 @@ namespace Tweepics.Parse
                 DateTime dateTime = DateTime.Parse(splitRawTweet[3]);
                 long tweetId = Convert.ToInt64(splitRawTweet[4]);
 
-                tweets.Add(new TweetData(splitRawTweet[0], splitRawTweet[1], userId, dateTime, tweetId, splitRawTweet[5]));
+                tweets.Add(new TweetData(splitRawTweet[0], splitRawTweet[1], userId, 
+                                         dateTime, tweetId, splitRawTweet[5]));
             }
 
             return tweets;

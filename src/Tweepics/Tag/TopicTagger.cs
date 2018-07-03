@@ -6,7 +6,7 @@ namespace Tweepics.Tag
 {
     class TopicTagger
     {
-        public void Tag(List<TweetData> tweets)
+        public List<TweetData> Tag(List<TweetData> tweets)
         {
             Dictionary<string, List<string>> tagsAndCategories = new Dictionary<string, List<string>>();
             tagsAndCategories.Add("Trump", new List<string> { "trump", "president", "white house" });
@@ -16,12 +16,12 @@ namespace Tweepics.Tag
             tagsAndCategories.Add("Media", new List<string> { "media", "new york times", "washington post", "fake news" });
 
             List<TweetData> tweetsAndTopics = new List<TweetData>();
+
             foreach (var tweet in tweets)
             {
                 List<string> tweetTags = new List<string>();
                 List<string> categories = new List<string>();
                 string lowercaseTweet = tweet.Text.ToLower();
-
 
                 foreach (var entry in tagsAndCategories)
                     foreach (var value in entry.Value)
@@ -36,7 +36,8 @@ namespace Tweepics.Tag
                 if (tweetTags.Count > 0)
                 {
                     tweetsAndTopics.Add(new TweetData(tweet.FullName, tweet.ScreenName, tweet.UserID,
-                        tweet.TweetDateTime, tweet.TweetID, tweet.Text, tweetTags));
+                                                      tweet.TweetDateTime, tweet.TweetID, tweet.Text, 
+                                                      tweetTags));
                 }
             }
 
@@ -45,13 +46,14 @@ namespace Tweepics.Tag
                 Console.WriteLine("TWEET:");
                 Console.WriteLine(tweet.Text);
                 Console.Write("TOPICS: ");
-                foreach (string tweetTag in tweet.TopicTags)
-                    Console.Write(tweetTag + ", ");
+                Console.WriteLine(string.Join(", ", tweet.TopicTags));
                 Console.WriteLine();
                 Console.WriteLine("*** END OF TWEET ***");
                 Console.WriteLine();
                 Console.WriteLine();
             }
+
+            return tweetsAndTopics;
         }
     }
 }
