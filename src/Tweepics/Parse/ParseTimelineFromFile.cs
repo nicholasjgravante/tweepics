@@ -9,17 +9,13 @@ namespace Tweepics.Parse
 
     public class ParseTimelineFromFile
     {
-        public List<TweetData> Parse(string fileName)
+        public List<TweetData> Parse(string tweetDataFolderPath, string fileName)
         {
-            List<TweetData> tweets = new List<TweetData>();
-
-            // Path to tweet_data folder
-            string exePath = Environment.CurrentDirectory;
-            string tweetDataFolderPath = Path.GetFullPath(Path.Combine(exePath, @"..\..\..\..\..\tweet_data"));
-
             string text = File.ReadAllText($@"{tweetDataFolderPath}\{fileName}");
             List<string> rawData = new List<string>();
             rawData = text.Split(" *****").ToList();
+
+            List<TweetData> tweets = new List<TweetData>();
 
             foreach (string tweet in rawData)
             {
@@ -36,7 +32,6 @@ namespace Tweepics.Parse
                 tweets.Add(new TweetData(splitRawTweet[0], splitRawTweet[1], userId, 
                                          dateTime, tweetId, splitRawTweet[5]));
             }
-
             return tweets;
         }
     }

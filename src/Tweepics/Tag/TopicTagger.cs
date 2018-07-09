@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using Tweepics.Parse;
 
@@ -33,26 +34,13 @@ namespace Tweepics.Tag
                                 continue;
                         }
 
-                if (tweetTags.Count > 0)
+                if (tweetTags.Any())
                 {
                     tweetsAndTopics.Add(new TweetData(tweet.FullName, tweet.ScreenName, tweet.UserID,
                                                       tweet.TweetDateTime, tweet.TweetID, tweet.Text, 
                                                       tweetTags));
                 }
             }
-
-            foreach (var tweet in tweetsAndTopics)
-            {
-                Console.WriteLine("TWEET:");
-                Console.WriteLine(tweet.Text);
-                Console.Write("TOPICS: ");
-                Console.WriteLine(string.Join(", ", tweet.TopicTags));
-                Console.WriteLine();
-                Console.WriteLine("*** END OF TWEET ***");
-                Console.WriteLine();
-                Console.WriteLine();
-            }
-
             return tweetsAndTopics;
         }
     }

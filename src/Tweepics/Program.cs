@@ -14,10 +14,17 @@ namespace Tweepics
             List<TweetData> untaggedTweets = new List<TweetData>();
             List<TweetData> taggedTweets = new List<TweetData>();
 
-            TimelineHistorical currentTweets = new TimelineHistorical();
-            untaggedTweets = currentTweets.Request(216776631);
+            TimelineCurrent currentTweets = new TimelineCurrent();
+            untaggedTweets = currentTweets.Request(25073877);
 
             taggedTweets = tagTweets.Tag(untaggedTweets);
+
+            foreach (var tweet in taggedTweets)
+            {
+                Console.WriteLine("TWEET CONTENT: " + tweet.Text);
+                Console.WriteLine("TWEET TAGS: " + string.Join(", ", tweet.TopicTags));
+                Console.WriteLine("");
+            }
 
             Console.WriteLine("The program ran to completion");
             Console.ReadLine();

@@ -35,7 +35,6 @@ namespace Tweepics.Requests
             {
                 jsonFile.WriteLine(jsonTweets);
             }
-
         }
     }
 }

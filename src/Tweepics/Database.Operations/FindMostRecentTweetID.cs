@@ -15,12 +15,17 @@ namespace Tweepics.Database.Operations
             MySqlCommand cmd = new MySqlCommand
             {
                 Connection = conn,
-                CommandText = @"SELECT MAX(tweet_id) FROM tweet_data WHERE user_id = @user_id"
+                CommandText = @"SELECT MAX(tweet_id) FROM tweet_data WHERE user_id = ?user_id"
             };
-            cmd.Parameters.AddWithValue("@user_id", userID);
+            cmd.Parameters.AddWithValue("?user_id", userID);
 
             MySqlDataReader dataReader = cmd.ExecuteReader();
             dataReader.Read();
+
+            if (dataReader[0] == DBNull.Value)
+            {
+                throw new ArgumentException($"No tweets from user {userID} were found in the database.");
+            }
 
             long mostRecentTweetID = Convert.ToInt64(dataReader[0]);
 
