@@ -23,8 +23,8 @@ namespace Tweepics.Tag
 
                 if (tagsAndKeywords.Any())
                 {
-                    string tagCategory = tagsAndKeywords[0].ToLower();
-                    string keywordString = tagsAndKeywords[1].ToLower();
+                    string tagCategory = tagsAndKeywords[0];
+                    string keywordString = tagsAndKeywords[1];
 
                     tagsKeywords.Add(new Tags(tagCategory, keywordString));
                 }

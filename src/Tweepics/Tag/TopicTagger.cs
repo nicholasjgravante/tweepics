@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using Tweepics.Parse;
+using Tweepics.Database.Operations;
 
 namespace Tweepics.Tag
 {
@@ -9,39 +10,36 @@ namespace Tweepics.Tag
     {
         public List<TweetData> Tag(List<TweetData> tweets)
         {
-            Dictionary<string, List<string>> tagsAndCategories = new Dictionary<string, List<string>>();
-            tagsAndCategories.Add("Trump", new List<string> { "trump", "president", "white house" });
-            tagsAndCategories.Add("Immigration", new List<string> { "border", "immigration", "wall" });
-            tagsAndCategories.Add("Economy", new List<string> { "economy", "business", "jobs", "wages", "unemployment" });
-            tagsAndCategories.Add("Russia", new List<string> { "russia", "putin", "kremlin", "russia investigation" });
-            tagsAndCategories.Add("Media", new List<string> { "media", "new york times", "washington post", "fake news" });
+            List<Tags> tagsKeywords = new List<Tags>();
+            ReadTagsFromDB dbTagReader = new ReadTagsFromDB();
+            tagsKeywords = dbTagReader.Read();
 
-            List<TweetData> tweetsAndTopics = new List<TweetData>();
+            List<TweetData> taggedTweets = new List<TweetData>();
 
             foreach (var tweet in tweets)
             {
-                List<string> tweetTags = new List<string>();
-                List<string> categories = new List<string>();
-                string lowercaseTweet = tweet.Text.ToLower();
+                List<string> tagIDs = new List<string>();
 
-                foreach (var entry in tagsAndCategories)
-                    foreach (var value in entry.Value)
-                        if (lowercaseTweet.Contains(value))
+                foreach (var singleTag in tagsKeywords)
+                    foreach (string keyword in singleTag.KeywordList)
+                        if (tweet.Text.ToLower().Contains(keyword))
                         {
-                            if (!tweetTags.Contains(entry.Key))
-                                tweetTags.Add(entry.Key);
+                            if (!tagIDs.Contains(singleTag.ID))
+                            {
+                                tagIDs.Add(singleTag.ID);
+                            }
                             else
                                 continue;
                         }
 
-                if (tweetTags.Any())
-                {
-                    tweetsAndTopics.Add(new TweetData(tweet.FullName, tweet.ScreenName, tweet.UserID,
-                                                      tweet.TweetDateTime, tweet.TweetID, tweet.Text, 
-                                                      tweetTags));
-                }
+                if (!tagIDs.Any())
+                    continue;
+
+                taggedTweets.Add(new TweetData(tweet.FullName, tweet.ScreenName, tweet.UserID, 
+                                               tweet.TweetDateTime, tweet.TweetID, tweet.Text, 
+                                               tagIDs));
             }
-            return tweetsAndTopics;
+            return taggedTweets;
         }
     }
 }

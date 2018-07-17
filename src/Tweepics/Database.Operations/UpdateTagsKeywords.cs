@@ -29,16 +29,15 @@ namespace Tweepics.Database.Operations
                     {
                         Connection = conn,
                         CommandText = @"INSERT INTO tweet_tags (id, tag, keywords) 
-                                        VALUES (?id, ?tag, ?keywords)
-                                        ON DUPLICATE KEY UPDATE keywords=?keywords"
+                                        VALUES (@id, @tag, @keywords)
+                                        ON DUPLICATE KEY UPDATE keywords=@keywords"
                     };
-                    cmd.Parameters.AddWithValue("?id", tagID);
-                    cmd.Parameters.AddWithValue("?tag", tagName);
-                    cmd.Parameters.AddWithValue("?keywords", tagKeywords);
+                    cmd.Parameters.Add("@id", MySqlDbType.VarChar).Value = tagID;
+                    cmd.Parameters.Add("@tag", MySqlDbType.VarChar).Value = tagName;
+                    cmd.Parameters.Add("@keywords", MySqlDbType.VarChar).Value = tagKeywords;
 
                     cmd.ExecuteNonQuery();
                 }
-
                 conn.Close();
             }
             catch (MySqlException e)

@@ -19,9 +19,9 @@ namespace Tweepics.Tag
         public Tags(string tagID, string tagCategory, string keywordString)
         {
             ID = tagID;
-            Tag = tagCategory;
-            KeywordString = keywordString;
-            KeywordList = keywordString.Split(", ").ToList();
+            Tag = tagCategory.ToLower();
+            KeywordString = keywordString.ToLower();
+            KeywordList = keywordString.ToLower().Split(", ").ToList();
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Web;
 using System.Collections.Generic;
+using Tweepics.Tag;
 
 namespace Tweepics.Parse
 {
@@ -11,24 +13,30 @@ namespace Tweepics.Parse
         public DateTime TweetDateTime { get; set; }
         public long TweetID { get; set; }
         public string Text { get; set; }
-        public List<string> TopicTags { get; set; }
+        public List<string> TagIDs { get; set; }
+        public DateTime AddedDateTime { get; set; }
 
         public TweetData() { }
 
-        public TweetData(string tweeterName, string tweeterScreenName, long tweeterUserID,
-            DateTime dateTime, long tweetID, string tweetText)
-            : this(tweeterName, tweeterScreenName, tweeterUserID, dateTime, tweetID, tweetText, new List<string> { }) { }
+        public TweetData(string fullName, string screenName, long userID,
+                         DateTime tweetDateTime, long tweetID, string text)
+            : this(fullName, screenName, userID, tweetDateTime, tweetID, text, new List<string> { }, new DateTime()) { }
 
-        public TweetData(string tweeterName, string tweeterScreenName, long tweeterUserID,
-            DateTime dateTime, long tweetID, string tweetText, List<string> tweetTags)
+        public TweetData(string fullName, string screenName, long userID,
+                         DateTime tweetDateTime, long tweetID, string text, List<string> tagIDs)
+            : this(fullName, screenName, userID, tweetDateTime, tweetID, text, tagIDs, new DateTime()) { }
+
+        public TweetData(string fullName, string screenName, long userID,
+                         DateTime tweetDateTime, long tweetID, string text, List<string> tagIDs, DateTime addedDateTime)
         {
-            FullName = tweeterName;
-            ScreenName = tweeterScreenName;
-            UserID = tweeterUserID;
-            TweetDateTime = dateTime;
+            FullName = fullName;
+            ScreenName = screenName;
+            UserID = userID;
+            TweetDateTime = tweetDateTime;
             TweetID = tweetID;
-            Text = tweetText;
-            TopicTags = tweetTags;
+            Text = HttpUtility.HtmlDecode(text);
+            TagIDs = tagIDs;
+            AddedDateTime = addedDateTime;
         }
     }
 }

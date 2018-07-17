@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Tweepics.Tag;
 using Tweepics.Parse;
 using Tweepics.Requests;
+using Tweepics.Database.Operations;
 
 namespace Tweepics
 {
@@ -19,12 +20,8 @@ namespace Tweepics
 
             taggedTweets = tagTweets.Tag(untaggedTweets);
 
-            foreach (var tweet in taggedTweets)
-            {
-                Console.WriteLine("TWEET CONTENT: " + tweet.Text);
-                Console.WriteLine("TWEET TAGS: " + string.Join(", ", tweet.TopicTags));
-                Console.WriteLine("");
-            }
+            AddTweetData addTweetData = new AddTweetData();
+            addTweetData.AddData(taggedTweets);
 
             Console.WriteLine("The program ran to completion");
             Console.ReadLine();

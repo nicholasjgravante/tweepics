@@ -20,34 +20,32 @@ namespace Tweepics.Database.Operations
 
                 foreach (var tweet in tweets)
                 {
-                    List<string> tags = new List<string>();
-                    tags = tweet.TopicTags;
-
                     MySqlCommand cmd = new MySqlCommand
                     {
                         Connection = conn,
                         CommandText = @"INSERT INTO tweet_data (full_name, screen_name, user_id, tweet_datetime, 
-                                        tweet_id, text, topic_tags, added_datetime)
-                                        VALUES (?full_name, ?screen_name, ?user_id, ?tweet_datetime, 
-                                        ?tweet_id, ?text, ?topic_tags, ?added_datetime)"
+                                        tweet_id, tweet_text, topic_tags, added_datetime)
+                                        VALUES (@full_name, @screen_name, @user_id, @tweet_datetime, 
+                                        @tweet_id, @tweet_text, @topic_tags, @added_datetime)"
                     };
-                    cmd.Parameters.AddWithValue("?full_name", tweet.FullName);
-                    cmd.Parameters.AddWithValue("?screen_name", tweet.ScreenName);
-                    cmd.Parameters.AddWithValue("?user_id", tweet.UserID);
-                    cmd.Parameters.AddWithValue("?tweet_datetime", tweet.TweetDateTime);
-                    cmd.Parameters.AddWithValue("?tweet_id", tweet.TweetID);
-                    cmd.Parameters.AddWithValue("?text", tweet.Text);
-                    cmd.Parameters.AddWithValue("?topic_tags", string.Join(", ", tags));
-                    cmd.Parameters.AddWithValue("?added_datetime", now);
+                    cmd.Parameters.Add("@full_name", MySqlDbType.VarChar).Value = tweet.FullName;
+                    cmd.Parameters.Add("@screen_name", MySqlDbType.VarChar).Value = tweet.ScreenName;
+                    cmd.Parameters.Add("@user_id", MySqlDbType.Int64).Value = tweet.UserID;
+                    cmd.Parameters.Add("@tweet_datetime", MySqlDbType.DateTime).Value = tweet.TweetDateTime;
+                    cmd.Parameters.Add("@tweet_id", MySqlDbType.Int64).Value = tweet.TweetID;
+                    cmd.Parameters.Add("@tweet_text", MySqlDbType.VarChar).Value = tweet.Text;
+                    cmd.Parameters.Add("@topic_tags", MySqlDbType.VarChar).Value = string.Join(", ", tweet.TagIDs);
+                    cmd.Parameters.Add("@added_datetime", MySqlDbType.DateTime).Value = now;
 
+                    cmd.Prepare();
                     cmd.ExecuteNonQuery();
                 }
-
                 conn.Close();
             }
             catch (MySqlException e)
             {
                 Console.WriteLine(e.Message);
+                throw e;
             }
         }
     }

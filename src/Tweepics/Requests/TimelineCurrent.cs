@@ -18,7 +18,7 @@ namespace Tweepics.Requests
                                     Keys.twitterAccessTokenSecret);
 
             FindMostRecentTweetID findSinceID = new FindMostRecentTweetID();
-            long latestTweetID = findSinceID.FindID(userID);
+            long latestTweetID = findSinceID.FindRecent(userID);
 
             var timelineParametersInitial = new UserTimelineParameters
             {
