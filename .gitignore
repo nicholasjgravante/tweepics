@@ -5,9 +5,10 @@
 # Visual Studio 2017 cache/options directory
 .vs/
 
-# Config keys
-Tweepics.dll.config
+# Config keys/Private info
+Tweepics.Core.dll.config
 Keys.cs
+launchSettings.json
 
 # Tweet data files
 tweet_data/*.txt

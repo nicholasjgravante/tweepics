@@ -4,6 +4,7 @@ using Tweepics.Tag;
 using Tweepics.Parse;
 using Tweepics.Requests;
 using Tweepics.Database.Operations;
+using Tweepics.Config;
 
 namespace Tweepics
 {
