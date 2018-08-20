@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Tweepics.Core.Tag.Tags>
+﻿@model IEnumerable<string>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -12,7 +12,7 @@
                 <td>
                     <a asp-action="Topic" 
                      asp-controller="Display"
-                     asp-route-tag="@tag.Tag">@tag.Tag</a>
+                     asp-route-tag="@tag">@tag</a>
                 </td>
             </tr>
         }

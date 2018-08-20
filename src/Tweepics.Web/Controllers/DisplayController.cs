@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
+using Tweepics.Core.Tag;
 using Tweepics.Web.Services;
 
 namespace Tweepics.Web.Controllers
@@ -9,12 +11,15 @@ namespace Tweepics.Web.Controllers
     {
         private ITweetData _tweetData;
         private IConfiguration _configuration;
+        private ITags _tagData;
 
         public DisplayController(ITweetData tweetData,
+                                 ITags tagData,
                                  IConfiguration configuration)
         {
             _tweetData = tweetData;
             _configuration = configuration;
+            _tagData = tagData;
         }
 
         public IActionResult Tweets()
@@ -26,6 +31,13 @@ namespace Tweepics.Web.Controllers
 
         public IActionResult Topic(string tag)
         {
+            List<string> tags = _tagData.GetAll();
+
+            if(!tags.Contains(tag))
+            {
+                return Content("No such tag was found.");
+            }
+
             var model = _tweetData.FindByTag(tag);
 
             if(model==null)
