@@ -22,7 +22,7 @@
 
   <ItemGroup>
     <None Update="Tweepics.Core.dll.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Tweepics.dll.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

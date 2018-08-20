@@ -1,0 +1,21 @@
+﻿@model IEnumerable<Tweepics.Core.Parse.TweetData>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Tweet Data</title>
+</head>
+<body>
+    <table>
+        @foreach (var tweet in Model)
+        {
+        <tr>
+            <td>@tweet.FullName</td>
+            <td>@tweet.TweetDateTime</td>
+            <td>@tweet.TweetID</td>
+            <td>@tweet.Text</td>
+        </tr>
+        }
+
+    </table>
+</body>
+</html>

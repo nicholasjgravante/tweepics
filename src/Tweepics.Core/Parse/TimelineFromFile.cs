@@ -3,11 +3,11 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Tweepics.Parse
+namespace Tweepics.Core.Parse
 {
     // Read and use tweet data from file in lieu of additional Twitter requests.
 
-    public class ParseTimelineFromFile
+    public class TimelineFromFile
     {
         public List<TweetData> Parse(string tweetDataFolderPath, string fileName)
         {
@@ -25,12 +25,15 @@ namespace Tweepics.Parse
                 if (splitRawTweet.Count < 6)
                     break;
 
+                string fullName = splitRawTweet[0];
+                string screenName = splitRawTweet[1];
                 long userId = Convert.ToInt64(splitRawTweet[2]);
-                DateTime dateTime = DateTime.Parse(splitRawTweet[3]);
+                DateTime tweetDateTime = DateTime.Parse(splitRawTweet[3]);
                 long tweetId = Convert.ToInt64(splitRawTweet[4]);
+                string tweetText = splitRawTweet[5];
 
-                tweets.Add(new TweetData(splitRawTweet[0], splitRawTweet[1], userId, 
-                                         dateTime, tweetId, splitRawTweet[5]));
+                tweets.Add(new TweetData(fullName, screenName, userId, 
+                                         tweetDateTime, tweetId, tweetText));
             }
             return tweets;
         }

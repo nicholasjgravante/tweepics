@@ -1,8 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
 
-namespace Tweepics.Tag
+namespace Tweepics.Core.Tag
 {
     public class Tags
     {
@@ -19,7 +18,7 @@ namespace Tweepics.Tag
         public Tags(string tagID, string tagCategory, string keywordString)
         {
             ID = tagID;
-            Tag = tagCategory.ToLower();
+            Tag = tagCategory;
             KeywordString = keywordString.ToLower();
             KeywordList = keywordString.ToLower().Split(", ").ToList();
         }

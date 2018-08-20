@@ -1,11 +1,10 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Tweepics.Tag
+namespace Tweepics.Core.Tag
 {
-    public class ReadTagsFromFile
+    public class TagsFromFile
     {
         public List<Tags> Read(string tagsFolderPath, string fileName)
         {

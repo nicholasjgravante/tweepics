@@ -1,20 +1,20 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
-using Tweepics.Parse;
-using Tweepics.Database.Operations;
+using Tweepics.Core.Parse;
+using Tweepics.Core.Database.Operations;
+using Tweepics.Core.Config;
 
-namespace Tweepics.Tag
+namespace Tweepics.Core.Tag
 {
     class TopicTagger
     {
-        public List<TweetData> Tag(List<TweetData> tweets)
+        public List<TaggedTweets> Tag(List<TweetData> tweets)
         {
             List<Tags> tagsKeywords = new List<Tags>();
-            ReadTagsFromDB dbTagReader = new ReadTagsFromDB();
-            tagsKeywords = dbTagReader.Read();
+            TagsFromDB dbTagReader = new TagsFromDB();
+            tagsKeywords = dbTagReader.Read(Keys.mySqlConnectionString);
 
-            List<TweetData> taggedTweets = new List<TweetData>();
+            List<TaggedTweets> taggedTweets = new List<TaggedTweets>();
 
             foreach (var tweet in tweets)
             {
@@ -35,9 +35,7 @@ namespace Tweepics.Tag
                 if (!tagIDs.Any())
                     continue;
 
-                taggedTweets.Add(new TweetData(tweet.FullName, tweet.ScreenName, tweet.UserID, 
-                                               tweet.TweetDateTime, tweet.TweetID, tweet.Text, 
-                                               tagIDs));
+                taggedTweets.Add(new TaggedTweets(tweet.TweetID, tagIDs));
             }
             return taggedTweets;
         }

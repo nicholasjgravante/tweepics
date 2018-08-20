@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Configuration;
 
-namespace Tweepics.Config
+namespace Tweepics.Core.Config
 {
     public class KeysSample
     {

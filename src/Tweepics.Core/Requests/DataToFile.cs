@@ -4,13 +4,14 @@ using System.Text;
 using System.Collections.Generic;
 using Tweetinvi;
 using Tweetinvi.Models;
-using Tweepics.Parse;
+using Tweepics.Core.Parse;
 
-namespace Tweepics.Requests
+namespace Tweepics.Core.Requests
 {
     public class DataToFile
     {
-        public static void Write(long userID, List<TweetData> tweetData, IEnumerable<ITweet> rawTimelineData, string currentOrHistorical)
+        public static void Write(long userID, List<TweetData> tweetData, 
+                                 IEnumerable<ITweet> rawTimelineData, string currentOrHistorical)
         {
             string exePath = Environment.CurrentDirectory;
             string tweetDataFolderPath = Path.GetFullPath(Path.Combine(exePath, @"..\..\..\..\..\tweet_data"));

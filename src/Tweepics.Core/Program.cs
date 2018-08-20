@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Tweepics.Tag;
-using Tweepics.Parse;
-using Tweepics.Requests;
-using Tweepics.Database.Operations;
-using Tweepics.Config;
+using Tweepics.Core.Tag;
+using Tweepics.Core.Parse;
+using Tweepics.Core.Requests;
+using Tweepics.Core.Database.Operations;
+
 
 namespace Tweepics
 {
@@ -12,19 +12,21 @@ namespace Tweepics
     {
         static void Main(string[] args)
         {
-            TopicTagger tagTweets = new TopicTagger();
+            GetTimeline getTimeline = new GetTimeline();
             List<TweetData> untaggedTweets = new List<TweetData>();
-            List<TweetData> taggedTweets = new List<TweetData>();
+            untaggedTweets = getTimeline.User(970207298);
 
-            TimelineCurrent currentTweets = new TimelineCurrent();
-            untaggedTweets = currentTweets.Request(25073877);
+            AddTweetData addUntaggedTweets = new AddTweetData();
+            addUntaggedTweets.Add(untaggedTweets);
 
-            taggedTweets = tagTweets.Tag(untaggedTweets);
+            TopicTagger topicTagger = new TopicTagger();
+            List<TaggedTweets> taggedTweets = new List<TaggedTweets>();
+            taggedTweets = topicTagger.Tag(untaggedTweets);
 
-            AddTweetData addTweetData = new AddTweetData();
-            addTweetData.AddData(taggedTweets);
+            AddTaggedTweets addTaggedTweets = new AddTaggedTweets();
+            addTaggedTweets.Add(taggedTweets);
 
-            Console.WriteLine("The program ran to completion");
+            Console.WriteLine("The program ran to completion.");
             Console.ReadLine();
         }
     }

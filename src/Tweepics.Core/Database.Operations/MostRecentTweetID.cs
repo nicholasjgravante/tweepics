@@ -1,12 +1,12 @@
 ﻿using System;
 using MySql.Data.MySqlClient;
-using Tweepics.Config;
+using Tweepics.Core.Config;
 
-namespace Tweepics.Database.Operations
+namespace Tweepics.Core.Database.Operations
 {
-    public class FindMostRecentTweetID
+    public class MostRecentTweetID
     {
-        public long FindRecent(long userID)
+        public long? Find(long userID)
         {
             string connectionString = Keys.mySqlConnectionString;
             MySqlConnection conn = new MySqlConnection(connectionString);
@@ -24,7 +24,7 @@ namespace Tweepics.Database.Operations
 
             if (dataReader[0] == DBNull.Value)
             {
-                throw new ArgumentException($"No tweets from user {userID} were found in the database.");
+                return null;
             }
 
             long mostRecentTweetID = Convert.ToInt64(dataReader[0]);

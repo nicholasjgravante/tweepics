@@ -3,10 +3,10 @@ using System.Linq;
 using System.Collections.Generic;
 using Tweetinvi;
 using Tweetinvi.Parameters;
-using Tweepics.Parse;
-using Tweepics.Config;
+using Tweepics.Core.Parse;
+using Tweepics.Core.Config;
 
-namespace Tweepics.Requests
+namespace Tweepics.Core.Requests
 {
     // Iterate through a user's timeline to capture their latest 500 tweets
     // as a means of gathering a large set of initial data.
@@ -15,55 +15,56 @@ namespace Tweepics.Requests
     {
         public List<TweetData> Request(long userID)
         {
-            Auth.SetUserCredentials(Keys.twitterConsumerKey, 
-                                    Keys.twitterConsumerSecret, 
-                                    Keys.twitterAccessToken, 
-                                    Keys.twitterAccessTokenSecret);
-
-            var timelineParametersInitial = new UserTimelineParameters
+            UserTimelineParameters timelineParameters = new UserTimelineParameters
             {
                 MaximumNumberOfTweetsToRetrieve = 200,
                 IncludeRTS = false
             };
 
-            var rawResponse = Timeline.GetUserTimeline(userID, timelineParametersInitial);
+            var twitterResponse = Timeline.GetUserTimeline(userID, timelineParameters);
 
-            List<TweetData> tweetData = new List<TweetData>();
-
-            foreach (var tweet in rawResponse)
+            if(twitterResponse != null && twitterResponse.Any())
             {
-                tweetData.Add(new TweetData(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName, 
-                                            tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id, 
-                                            tweet.FullText));
-            }
+                List<TweetData> tweetData = new List<TweetData>();
 
-            while (tweetData.Count <= 500)
-            {
-                // Max ID set to lowest tweet ID in our collection (i.e. the oldest tweet) minus 1.
-                // This number serves as a point of reference for requesting tweets older than those
-                // Twitter previously returned.
-
-                long maxTweetID = tweetData.Min(x => x.TweetID) - 1;
-                var timelineParametersNew = new UserTimelineParameters
+                foreach (var tweet in twitterResponse)
                 {
-                    MaximumNumberOfTweetsToRetrieve = 200,
-                    IncludeRTS = false,
-                    MaxId = maxTweetID
-                };
-
-                var tweetsLaterPulls = Timeline.GetUserTimeline(userID, timelineParametersNew);
-
-                foreach (var tweet in tweetsLaterPulls)
-                {
-                    tweetData.Add(new TweetData(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName, 
-                                                tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id, 
+                    tweetData.Add(new TweetData(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
+                                                tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
                                                 tweet.FullText));
                 }
+
+                while (tweetData.Count <= 500)
+                {
+                    // Max ID set to lowest tweet ID in our collection (i.e. the oldest tweet) minus 1.
+                    // This number serves as a point of reference for requesting tweets older than those
+                    // Twitter previously returned.
+
+                    long maxTweetID = tweetData.Min(x => x.TweetID) - 1;
+                    timelineParameters = new UserTimelineParameters
+                    {
+                        MaximumNumberOfTweetsToRetrieve = 200,
+                        IncludeRTS = false,
+                        MaxId = maxTweetID
+                    };
+
+                    var tweetsLaterPulls = Timeline.GetUserTimeline(userID, timelineParameters);
+
+                    foreach (var tweet in tweetsLaterPulls)
+                    {
+                        tweetData.Add(new TweetData(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
+                                                    tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
+                                                    tweet.FullText));
+                    }
+                }
+
+                DataToFile.Write(userID, tweetData, twitterResponse, "Historical");
+                return tweetData;
             }
-
-            DataToFile.Write(userID, tweetData, rawResponse, "Historical");
-
-            return tweetData;
+            else
+            {
+                throw new NullReferenceException($"No tweets were returned for user id {userID}.");
+            }
         }
     }
 }

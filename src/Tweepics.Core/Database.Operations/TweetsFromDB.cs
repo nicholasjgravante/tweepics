@@ -1,17 +1,17 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
-using Tweepics.Parse;
-using Tweepics.Config;
+using Tweepics.Core.Parse;
 
-namespace Tweepics.Database.Operations
+namespace Tweepics.Core.Database.Operations
 {
-    public class ReadTweetsFromDB
+    public class TweetsFromDB
     {
-        public List<TweetData> Read()
+        // Connection string as parameter for use by Tweepics.Web
+        // with its own config file
+
+        public List<TweetData> Read(string connectionString)
         {
-            string connectionString = Keys.mySqlConnectionString;
             MySqlConnection conn = new MySqlConnection(connectionString);
             conn.Open();
 
@@ -34,14 +34,10 @@ namespace Tweepics.Database.Operations
                 DateTime tweetDateTime = Convert.ToDateTime(dataReader[3]);
                 long tweetID = Convert.ToInt64(dataReader[4]);
                 string text = dataReader[5].ToString();
-
-                List<string> tagIDs = new List<string> ();
-                tagIDs = dataReader[6].ToString().Split(", ").ToList();
-
-                DateTime addedDateTime = Convert.ToDateTime(dataReader[7]);
+                DateTime addedDateTime = Convert.ToDateTime(dataReader[6]);
 
                 tweets.Add(new TweetData(fullName, screenName, userID, tweetDateTime, 
-                                         tweetID, text, tagIDs, addedDateTime));
+                                         tweetID, text, addedDateTime));
             }
             dataReader.Close();
             conn.Close();

@@ -2,6 +2,12 @@
 [Bb]in/
 [Oo]bj/
 
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
 # Visual Studio 2017 cache/options directory
 .vs/
 
@@ -9,6 +15,8 @@
 Tweepics.Core.dll.config
 Keys.cs
 launchSettings.json
+appsettings.json
+appsettings.*.json
 
 # Tweet data files
 tweet_data/*.txt
