@@ -1,0 +1,21 @@
+﻿@model IEnumerable<Tweepics.Core.Tag.Tags>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+    <table>
+        @foreach (var tag in Model)
+        {
+            <tr>
+                <td>
+                    <a asp-action="Topic" 
+                     asp-controller="Display"
+                     asp-route-tag="@tag.Tag">@tag.Tag</a>
+                </td>
+            </tr>
+        }
+    </table>
+</body>
+</html>
