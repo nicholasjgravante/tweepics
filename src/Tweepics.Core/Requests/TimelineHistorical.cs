@@ -22,8 +22,19 @@ namespace Tweepics.Core.Requests
             };
 
             var twitterResponse = Timeline.GetUserTimeline(userID, timelineParameters);
+            var latestException = ExceptionHandler.GetLastException();
 
-            if(twitterResponse != null && twitterResponse.Any())
+            if (latestException != null)
+            {
+                throw new InvalidOperationException
+                    ($"{latestException.StatusCode} : {latestException.TwitterDescription}");
+            }
+            else if (twitterResponse == null || !twitterResponse.Any())
+            {
+                Console.WriteLine($"No tweets were returned for user id {userID}.");
+                return null;
+            }
+            else
             {
                 List<TweetData> tweetData = new List<TweetData>();
 
@@ -60,10 +71,6 @@ namespace Tweepics.Core.Requests
 
                 DataToFile.Write(userID, tweetData, twitterResponse, "Historical");
                 return tweetData;
-            }
-            else
-            {
-                throw new NullReferenceException($"No tweets were returned for user id {userID}.");
             }
         }
     }
