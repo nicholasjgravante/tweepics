@@ -1,32 +1,28 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using Tweepics.Core.Parse;
-using Tweepics.Core.Database.Operations;
+using Tweepics.Core.Database;
 using Tweepics.Core.Config;
 
 namespace Tweepics.Core.Tag
 {
-    class TopicTagger
+    class TweetTagger
     {
-        public List<TaggedTweets> Tag(List<TweetData> tweets)
+        public List<TaggedTweets> Tag(List<TweetData> untaggedTweets, List<Tags> tags)
         {
-            List<Tags> tagsKeywords = new List<Tags>();
-            TagsFromDB dbTagReader = new TagsFromDB();
-            tagsKeywords = dbTagReader.Read(Keys.mySqlConnectionString);
-
             List<TaggedTweets> taggedTweets = new List<TaggedTweets>();
 
-            foreach (var tweet in tweets)
+            foreach (var tweet in untaggedTweets)
             {
                 List<string> tagIDs = new List<string>();
 
-                foreach (var singleTag in tagsKeywords)
-                    foreach (string keyword in singleTag.KeywordList)
+                foreach (var tag in tags)
+                    foreach (string keyword in tag.KeywordList)
                         if (tweet.Text.ToLower().Contains(keyword))
                         {
-                            if (!tagIDs.Contains(singleTag.ID))
+                            if (!tagIDs.Contains(tag.ID))
                             {
-                                tagIDs.Add(singleTag.ID);
+                                tagIDs.Add(tag.ID);
                             }
                             else
                                 continue;

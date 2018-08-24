@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using Tweepics.Core.Tag;
 using Tweepics.Core.Parse;
 using Tweepics.Core.Requests;
-using Tweepics.Core.Database.Operations;
-
+using Tweepics.Core.Database;
 
 namespace Tweepics
 {
@@ -12,19 +11,27 @@ namespace Tweepics
     {
         static void Main(string[] args)
         {
+            long userID = 30354991; 
+
+            TweetReader tweetReader = new TweetReader();
+            long? mostRecentTweetID = tweetReader.FindMostRecentTweetID(userID);
+
             GetTimeline getTimeline = new GetTimeline();
             List<TweetData> untaggedTweets = new List<TweetData>();
-            untaggedTweets = getTimeline.User(970207298);
+            untaggedTweets = getTimeline.User(userID, mostRecentTweetID);
 
-            AddTweetData addUntaggedTweets = new AddTweetData();
-            addUntaggedTweets.Add(untaggedTweets);
+            TweetAdder tweetAdder = new TweetAdder();
+            tweetAdder.AddUntaggedTweets(untaggedTweets);
 
-            TopicTagger topicTagger = new TopicTagger();
+            TagReader tagReader = new TagReader();
+            List<Tags> tags = new List<Tags>();
+            tags = tagReader.ReadAll();
+
+            TweetTagger tweetTagger = new TweetTagger();
             List<TaggedTweets> taggedTweets = new List<TaggedTweets>();
-            taggedTweets = topicTagger.Tag(untaggedTweets);
+            taggedTweets = tweetTagger.Tag(untaggedTweets, tags);
 
-            AddTaggedTweets addTaggedTweets = new AddTaggedTweets();
-            addTaggedTweets.Add(taggedTweets);
+            tweetAdder.AddTaggedTweets(taggedTweets);
 
             Console.WriteLine("The program ran to completion.");
             Console.ReadLine();

@@ -1,0 +1,78 @@
+﻿using System;
+using System.Collections.Generic;
+using MySql.Data.MySqlClient;
+using Tweepics.Core.Tag;
+using Tweepics.Core.Parse;
+using Tweepics.Core.Config;
+
+namespace Tweepics.Core.Database
+{
+    public class TweetAdder
+    {
+        public void AddUntaggedTweets(List<TweetData> untaggedTweets)
+        {
+            DateTime now = DateTime.Now;
+
+            using (MySqlConnection connection = new MySqlConnection(Keys.mySqlConnectionString))
+            {
+                connection.Open();
+                
+                foreach (var tweet in untaggedTweets)
+                {
+                    MySqlCommand cmd = new MySqlCommand
+                    {
+                        Connection = connection,
+                        CommandText = @"INSERT INTO tweet_data (full_name, screen_name, user_id, tweet_datetime, 
+                                    tweet_id, tweet_text, added_datetime)
+                                    VALUES (@full_name, @screen_name, @user_id, @tweet_datetime, 
+                                    @tweet_id, @tweet_text, @added_datetime)"
+                    };
+                    cmd.Parameters.Add("@full_name", MySqlDbType.VarChar).Value = tweet.FullName;
+                    cmd.Parameters.Add("@screen_name", MySqlDbType.VarChar).Value = tweet.ScreenName;
+                    cmd.Parameters.Add("@user_id", MySqlDbType.Int64).Value = tweet.UserID;
+                    cmd.Parameters.Add("@tweet_datetime", MySqlDbType.DateTime).Value = tweet.TweetDateTime;
+                    cmd.Parameters.Add("@tweet_id", MySqlDbType.Int64).Value = tweet.TweetID;
+                    cmd.Parameters.Add("@tweet_text", MySqlDbType.VarChar).Value = tweet.Text;
+                    cmd.Parameters.Add("@added_datetime", MySqlDbType.DateTime).Value = now;
+
+                    cmd.Prepare();
+                    cmd.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
+        }
+                
+        public void AddTaggedTweets(List<TaggedTweets> taggedTweets)
+        {
+            DateTime now = DateTime.Now;
+
+            using (MySqlConnection connection = new MySqlConnection(Keys.mySqlConnectionString))
+            {
+                connection.Open();
+
+                foreach (var tweet in taggedTweets)
+                {
+                    foreach (string singleTagID in tweet.TagID)
+                    {
+                        Guid guid = Guid.NewGuid();
+                        string id = guid.ToString();
+
+                        MySqlCommand cmd = new MySqlCommand
+                        {
+                            Connection = connection,
+                            CommandText = @"INSERT INTO tagmap (id, tweet_id, tag_id)
+                                        VALUES (@id, @tweet_id, @tag_id)"
+                        };
+                        cmd.Parameters.Add("@id", MySqlDbType.VarChar).Value = id;
+                        cmd.Parameters.Add("@tweet_id", MySqlDbType.Int64).Value = tweet.TweetID;
+                        cmd.Parameters.Add("@tag_id", MySqlDbType.VarChar).Value = singleTagID;
+
+                        cmd.Prepare();
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                connection.Close();
+            } 
+        }
+    }
+}
