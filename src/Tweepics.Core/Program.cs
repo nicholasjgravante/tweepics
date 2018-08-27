@@ -14,12 +14,9 @@ namespace Tweepics
         {
             long userID = 30354991;
 
-            TweetReader tweetReader = new TweetReader(Keys.mySqlConnectionString);
-            long? mostRecentTweetID = tweetReader.FindMostRecentTweetID(userID);
-
-            GetTimeline getTimeline = new GetTimeline();
+            Timeline timeline = new Timeline();
             List<Tweet> untaggedTweets = new List<Tweet>();
-            untaggedTweets = getTimeline.User(userID, mostRecentTweetID);
+            untaggedTweets = timeline.GetTimeline(userID);
 
             TweetAdder tweetAdder = new TweetAdder(Keys.mySqlConnectionString);
             tweetAdder.AddUntaggedTweets(untaggedTweets);
