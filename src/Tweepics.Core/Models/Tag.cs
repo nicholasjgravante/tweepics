@@ -1,24 +1,24 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 
-namespace Tweepics.Core.Tag
+namespace Tweepics.Core.Models
 {
-    public class Tags
+    public class Tag
     {
         public string ID { get; set; }
-        public string Tag { get; set; }
+        public string Name { get; set; }
         public string KeywordString { get; set; }
         public List<string> KeywordList { get; set; }
 
-        public Tags() { }
+        public Tag() { }
 
-        public Tags(string tagCategory, string keywordsString)
-            : this ("", tagCategory, keywordsString) { }
+        public Tag(string tagName, string keywordsString)
+            : this ("", tagName, keywordsString) { }
 
-        public Tags(string tagID, string tagCategory, string keywordString)
+        public Tag(string tagID, string tagName, string keywordString)
         {
             ID = tagID;
-            Tag = tagCategory;
+            Name = tagName;
             KeywordString = keywordString.ToLower();
             KeywordList = keywordString.ToLower().Split(", ").ToList();
         }

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using Tweepics.Core.Models;
 
 namespace Tweepics.Core.Parse
 {
@@ -9,13 +10,13 @@ namespace Tweepics.Core.Parse
 
     public class TimelineFromFile
     {
-        public List<TweetData> Parse(string tweetDataFolderPath, string fileName)
+        public List<Tweet> Parse(string tweetDataFolderPath, string fileName)
         {
             string text = File.ReadAllText($@"{tweetDataFolderPath}\{fileName}");
             List<string> rawData = new List<string>();
             rawData = text.Split(" *****").ToList();
 
-            List<TweetData> tweets = new List<TweetData>();
+            List<Tweet> tweets = new List<Tweet>();
 
             foreach (string tweet in rawData)
             {
@@ -32,7 +33,7 @@ namespace Tweepics.Core.Parse
                 long tweetId = Convert.ToInt64(splitRawTweet[4]);
                 string tweetText = splitRawTweet[5];
 
-                tweets.Add(new TweetData(fullName, screenName, userId, 
+                tweets.Add(new Tweet(fullName, screenName, userId, 
                                          tweetDateTime, tweetId, tweetText));
             }
             return tweets;

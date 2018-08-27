@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Tweepics.Core.Tag;
 
 namespace Tweepics.Web.Services
 {

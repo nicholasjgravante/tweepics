@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Web;
-using System.Collections.Generic;
-using Tweepics.Core.Tag;
 
-namespace Tweepics.Core.Parse
+namespace Tweepics.Core.Models
 {
-    public class TweetData
+    public class Tweet
     {
         public string FullName { get; set; }
         public string ScreenName { get; set; }
@@ -15,14 +13,14 @@ namespace Tweepics.Core.Parse
         public string Text { get; set; }
         public DateTime AddedDateTime { get; set; }
 
-        public TweetData() { }
+        public Tweet() { }
 
-        public TweetData(string fullName, string screenName, long userID,
-                         DateTime tweetDateTime, long tweetID, string tweetText)
+        public Tweet(string fullName, string screenName, long userID, 
+                     DateTime tweetDateTime, long tweetID, string tweetText)
             : this(fullName, screenName, userID, tweetDateTime, tweetID, tweetText, new DateTime()) { }
 
-        public TweetData(string fullName, string screenName, long userID,
-                         DateTime tweetDateTime, long tweetID, string tweetText, DateTime addedDateTime)
+        public Tweet(string fullName, string screenName, long userID,
+                     DateTime tweetDateTime, long tweetID, string tweetText, DateTime addedDateTime)
         {
             FullName = fullName;
             ScreenName = screenName;

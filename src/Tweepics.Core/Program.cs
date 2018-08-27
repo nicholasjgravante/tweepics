@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Tweepics.Core.Tag;
-using Tweepics.Core.Parse;
+using Tweepics.Core.Config;
+using Tweepics.Core.Models;
+using Tweepics.Core.Tagging;
 using Tweepics.Core.Requests;
 using Tweepics.Core.Database;
 
@@ -11,24 +12,24 @@ namespace Tweepics
     {
         static void Main(string[] args)
         {
-            long userID = 30354991; 
+            long userID = 30354991;
 
-            TweetReader tweetReader = new TweetReader();
+            TweetReader tweetReader = new TweetReader(Keys.mySqlConnectionString);
             long? mostRecentTweetID = tweetReader.FindMostRecentTweetID(userID);
 
             GetTimeline getTimeline = new GetTimeline();
-            List<TweetData> untaggedTweets = new List<TweetData>();
+            List<Tweet> untaggedTweets = new List<Tweet>();
             untaggedTweets = getTimeline.User(userID, mostRecentTweetID);
 
-            TweetAdder tweetAdder = new TweetAdder();
+            TweetAdder tweetAdder = new TweetAdder(Keys.mySqlConnectionString);
             tweetAdder.AddUntaggedTweets(untaggedTweets);
 
-            TagReader tagReader = new TagReader();
-            List<Tags> tags = new List<Tags>();
+            TagReader tagReader = new TagReader(Keys.mySqlConnectionString);
+            List<Tag> tags = new List<Tag>();
             tags = tagReader.ReadAll();
 
             TweetTagger tweetTagger = new TweetTagger();
-            List<TaggedTweets> taggedTweets = new List<TaggedTweets>();
+            List<TaggedTweet> taggedTweets = new List<TaggedTweet>();
             taggedTweets = tweetTagger.Tag(untaggedTweets, tags);
 
             tweetAdder.AddTaggedTweets(taggedTweets);

@@ -1,19 +1,20 @@
 ﻿using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using Tweepics.Core.Models;
 
-namespace Tweepics.Core.Tag
+namespace Tweepics.Core.Tagging
 {
     public class TagsFromFile
     {
-        public List<Tags> Read(string tagsFolderPath, string fileName)
+        public List<Tag> Read(string tagsFolderPath, string fileName)
         {
             string fileText = File.ReadAllText($@"{tagsFolderPath}\{fileName}");
 
             List<string> rawDataStrings = new List<string>();
             rawDataStrings = fileText.Split("\n").ToList();
 
-            List<Tags> tagsKeywords = new List<Tags>();
+            List<Tag> tagsKeywords = new List<Tag>();
 
             foreach (string line in rawDataStrings)
             {
@@ -22,10 +23,10 @@ namespace Tweepics.Core.Tag
 
                 if (tagsAndKeywords.Any())
                 {
-                    string tagCategory = tagsAndKeywords[0];
+                    string tagName = tagsAndKeywords[0];
                     string keywordString = tagsAndKeywords[1];
 
-                    tagsKeywords.Add(new Tags(tagCategory, keywordString));
+                    tagsKeywords.Add(new Tag(tagName, keywordString));
                 }
                 else
                     break;

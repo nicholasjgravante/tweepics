@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
-using Tweepics.Core.Parse;
+using Tweepics.Core.Models;
 using Tweepics.Core.Config;
 
 namespace Tweepics.Core.Database
 {
     public class TweetReader
     {
-        public List<TweetData> ReadAll()
+        private readonly string _connectionString;
+
+        public List<Tweet> ReadAll()
         {
-            using (MySqlConnection connection = new MySqlConnection(Keys.mySqlConnectionString))
+            using (MySqlConnection connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
 
@@ -23,7 +25,7 @@ namespace Tweepics.Core.Database
                 MySqlDataReader dataReader = cmd.ExecuteReader();
                 dataReader.Read();
 
-                List<TweetData> tweets = new List<TweetData>();
+                List<Tweet> tweets = new List<Tweet>();
 
                 while (dataReader.Read())
                 {
@@ -35,7 +37,7 @@ namespace Tweepics.Core.Database
                     string text = dataReader[5].ToString();
                     DateTime addedDateTime = Convert.ToDateTime(dataReader[6]);
 
-                    tweets.Add(new TweetData(fullName, screenName, userID, tweetDateTime,
+                    tweets.Add(new Tweet(fullName, screenName, userID, tweetDateTime,
                                              tweetID, text, addedDateTime));
                 }
                 dataReader.Close();
@@ -46,7 +48,7 @@ namespace Tweepics.Core.Database
 
         public long? FindMostRecentTweetID(long userID)
         {
-            using (MySqlConnection connection = new MySqlConnection(Keys.mySqlConnectionString))
+            using (MySqlConnection connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 MySqlCommand cmd = new MySqlCommand
@@ -71,13 +73,13 @@ namespace Tweepics.Core.Database
             }
         }
 
-        public List<TweetData> FindTweetsByTag(string tag)
+        public List<Tweet> FindTweetsByTag(string tag)
         {
-            using (MySqlConnection connection = new MySqlConnection(Keys.mySqlConnectionString))
+            using (MySqlConnection connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
 
-                List<TweetData> tweets = new List<TweetData>();
+                List<Tweet> tweets = new List<Tweet>();
 
                 // (1) Find tag id from argument in tweet_tags, (2) find tweet ids from 
                 // tag id in tagmap, and (3) find tweets from tweet ids in tweet_data
@@ -86,10 +88,10 @@ namespace Tweepics.Core.Database
                 {
                     Connection = connection,
                     CommandText = @"SELECT td.* 
-                                FROM tweet_data td, tweet_tags tt, tagmap tm
-                                WHERE td.tweet_id = tm.tweet_id
-                                AND tm.tag_id = tt.id
-                                AND tt.tag = @tag"
+                                    FROM tweet_data td, tweet_tags tt, tagmap tm
+                                    WHERE td.tweet_id = tm.tweet_id
+                                    AND tm.tag_id = tt.id
+                                    AND tt.tag = @tag"
                 };
                 cmd.Parameters.AddWithValue("@tag", tag.ToLower());
 
@@ -107,12 +109,17 @@ namespace Tweepics.Core.Database
                     long tweetID = Convert.ToInt64(dataReader[4]);
                     string tweetText = dataReader[5].ToString();
 
-                    tweets.Add(new TweetData(fullName, screenName, userID, tweetDateTime, tweetID, tweetText));
+                    tweets.Add(new Tweet(fullName, screenName, userID, tweetDateTime, tweetID, tweetText));
                 }
                 dataReader.Close();
                 connection.Close();
                 return tweets;
             }
+        }
+
+        public TweetReader(string mySqlConnectionString)
+        {
+            _connectionString = mySqlConnectionString;
         }
     }
 }

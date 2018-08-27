@@ -1,16 +1,14 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
-using Tweepics.Core.Parse;
-using Tweepics.Core.Database;
-using Tweepics.Core.Config;
+using Tweepics.Core.Models;
 
-namespace Tweepics.Core.Tag
+namespace Tweepics.Core.Tagging
 {
     class TweetTagger
     {
-        public List<TaggedTweets> Tag(List<TweetData> untaggedTweets, List<Tags> tags)
+        public List<TaggedTweet> Tag(List<Tweet> untaggedTweets, List<Tag> tags)
         {
-            List<TaggedTweets> taggedTweets = new List<TaggedTweets>();
+            List<TaggedTweet> taggedTweets = new List<TaggedTweet>();
 
             foreach (var tweet in untaggedTweets)
             {
@@ -31,7 +29,7 @@ namespace Tweepics.Core.Tag
                 if (!tagIDs.Any())
                     continue;
 
-                taggedTweets.Add(new TaggedTweets(tweet.TweetID, tagIDs));
+                taggedTweets.Add(new TaggedTweet(tweet.TweetID, tagIDs));
             }
             return taggedTweets;
         }

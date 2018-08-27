@@ -1,8 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Linq;
 using System.Collections.Generic;
-using System.Linq;
-using Tweepics.Core.Database.Operations;
-using Tweepics.Core.Tag;
+using Microsoft.Extensions.Configuration;
+using Tweepics.Core.Models;
+using Tweepics.Core.Database;
 
 namespace Tweepics.Web.Services
 {
@@ -19,12 +19,14 @@ namespace Tweepics.Web.Services
 
         public List<string> GetAll()
         {
-            TagsFromDB tagReader = new TagsFromDB();
-            List<Tags> tagsAllData = new List<Tags>();
-            tagsAllData = tagReader.Read(connectionString);
+            connectionString = _configuration["ConnectionString"];
+
+            TagReader tagReader = new TagReader(connectionString);
+            List<Tag> tagsAllData = new List<Tag>();
+            tagsAllData = tagReader.ReadAll();
 
             List<string> tagCategories = new List<string>();
-            tagCategories = tagsAllData.Select(tag => tag.Tag).ToList();
+            tagCategories = tagsAllData.Select(tag => tag.Name).ToList();
 
             return tagCategories;
         }

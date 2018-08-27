@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
-using Tweepics.Core.Tag;
-using Tweepics.Core.Parse;
+using Tweepics.Core.Models;
 using Tweepics.Core.Config;
 
 namespace Tweepics.Core.Database
 {
     public class TweetAdder
     {
-        public void AddUntaggedTweets(List<TweetData> untaggedTweets)
+        private readonly string _connectionString;
+
+        public void AddUntaggedTweets(List<Tweet> untaggedTweets)
         {
             DateTime now = DateTime.Now;
 
-            using (MySqlConnection connection = new MySqlConnection(Keys.mySqlConnectionString))
+            using (MySqlConnection connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
                 
@@ -42,11 +43,11 @@ namespace Tweepics.Core.Database
             }
         }
                 
-        public void AddTaggedTweets(List<TaggedTweets> taggedTweets)
+        public void AddTaggedTweets(List<TaggedTweet> taggedTweets)
         {
             DateTime now = DateTime.Now;
 
-            using (MySqlConnection connection = new MySqlConnection(Keys.mySqlConnectionString))
+            using (MySqlConnection connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
 
@@ -61,7 +62,7 @@ namespace Tweepics.Core.Database
                         {
                             Connection = connection,
                             CommandText = @"INSERT INTO tagmap (id, tweet_id, tag_id)
-                                        VALUES (@id, @tweet_id, @tag_id)"
+                                            VALUES (@id, @tweet_id, @tag_id)"
                         };
                         cmd.Parameters.Add("@id", MySqlDbType.VarChar).Value = id;
                         cmd.Parameters.Add("@tweet_id", MySqlDbType.Int64).Value = tweet.TweetID;
@@ -73,6 +74,11 @@ namespace Tweepics.Core.Database
                 }
                 connection.Close();
             } 
+        }
+        
+        public TweetAdder(string mySqlConnectionString)
+        {
+            _connectionString = mySqlConnectionString;
         }
     }
 }

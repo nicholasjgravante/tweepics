@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
-using Tweepics.Core.Tag;
 using Tweepics.Web.Services;
 
 namespace Tweepics.Web.Controllers

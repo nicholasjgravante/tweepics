@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Tweepics.Core.Database.Operations;
-using Tweepics.Core.Parse;
 using Microsoft.Extensions.Configuration;
+using Tweepics.Core.Models;
+using Tweepics.Core.Database;
 
 namespace Tweepics.Web.Services
 {
@@ -14,24 +14,24 @@ namespace Tweepics.Web.Services
             _configuration = configuration;
         }
 
-        public List<TweetData> GetAll()
+        public List<Tweet> GetAll()
         {
-            TweetsFromDB dbTweets = new TweetsFromDB();
-            List<TweetData> tweets = new List<TweetData>();
-
             string connectionString = _configuration["ConnectionString"];
 
-            tweets = dbTweets.Read(connectionString);
+            TweetReader dbTweets = new TweetReader(connectionString);
+            List<Tweet> tweets = new List<Tweet>();
+            tweets = dbTweets.ReadAll();
 
             return tweets;
         }
 
-        public List<TweetData> FindByTag(string tag)
+        public List<Tweet> FindByTag(string tag)
         {
-            List<TweetData> tweets = new List<TweetData>();
+            string connectionString = _configuration["ConnectionString"];
 
-            TweetsByTag tweetFinder = new TweetsByTag();
-            tweets = tweetFinder.Find(tag, _configuration["ConnectionString"]);
+            TweetReader tweetFinder = new TweetReader(connectionString);
+            List<Tweet> tweets = new List<Tweet>();
+            tweets = tweetFinder.FindTweetsByTag(tag);
 
             return tweets;
         }

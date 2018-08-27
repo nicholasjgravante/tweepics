@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using Tweepics.Core.Parse;
+using Tweepics.Core.Models;
 
 namespace Tweepics.Web.Services
 {
     public interface ITweetData
     {
-        List<TweetData> GetAll();
-        List<TweetData> FindByTag(string topic);
+        List<Tweet> GetAll();
+        List<Tweet> FindByTag(string topic);
     }
 }

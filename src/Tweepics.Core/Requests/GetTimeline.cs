@@ -1,20 +1,19 @@
 ﻿using System.Collections.Generic;
-using Tweetinvi;
-using Tweepics.Core.Parse;
+using Tweepics.Core.Models;
 using Tweepics.Core.Config;
 
 namespace Tweepics.Core.Requests
 {
     public class GetTimeline
     {
-        public List<TweetData> User(long userID, long? mostRecentTweetID)
+        public List<Tweet> User(long userID, long? mostRecentTweetID)
         {
-            Auth.SetUserCredentials(Keys.twitterConsumerKey,
-                                    Keys.twitterConsumerSecret,
-                                    Keys.twitterAccessToken,
-                                    Keys.twitterAccessTokenSecret);
+            Tweetinvi.Auth.SetUserCredentials(Keys.twitterConsumerKey,
+                                              Keys.twitterConsumerSecret,
+                                              Keys.twitterAccessToken,
+                                              Keys.twitterAccessTokenSecret);
 
-            List<TweetData> untaggedTweets = new List<TweetData>();
+            List<Tweet> untaggedTweets = new List<Tweet>();
 
             if(mostRecentTweetID == null)
             {
@@ -27,7 +26,6 @@ namespace Tweepics.Core.Requests
                 TimelineCurrent timelineCurrent = new TimelineCurrent();
                 untaggedTweets = timelineCurrent.Request(userID, mostRecentTweetID.Value);
             }
-
             return untaggedTweets;
         }
     }

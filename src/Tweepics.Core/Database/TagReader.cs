@@ -1,20 +1,21 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
-using Tweepics.Core.Tag;
-using Tweepics.Core.Config;
+using Tweepics.Core.Models;
 
 namespace Tweepics.Core.Database
 {
     public class TagReader
     {
-        public List<Tags> ReadAll()
+        private readonly string _connectionString;
+
+        public List<Tag> ReadAll()
         {
-            using (MySqlConnection connection = new MySqlConnection(Keys.mySqlConnectionString))
+            using (MySqlConnection connection = new MySqlConnection(_connectionString))
             {
                 connection.Open();
 
-                List<Tags> tags = new List<Tags>();
+                List<Tag> tags = new List<Tag>();
 
                 MySqlCommand cmd = new MySqlCommand
                 {
@@ -33,13 +34,18 @@ namespace Tweepics.Core.Database
 
                     string keywordString = dataReader[2].ToString();
 
-                    tags.Add(new Tags(id, tagCapitalizedFirst, keywordString));
+                    tags.Add(new Tag(id, tagCapitalizedFirst, keywordString));
                 }
                 dataReader.Close();
                 connection.Close();
 
                 return tags;
             }
+        }
+
+        public TagReader(string mySqlConnectionString)
+        {
+            _connectionString = mySqlConnectionString;
         }
     }
 }

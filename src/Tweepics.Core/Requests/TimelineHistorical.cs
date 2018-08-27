@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using Tweetinvi;
 using Tweetinvi.Parameters;
-using Tweepics.Core.Parse;
-using Tweepics.Core.Config;
+using Tweepics.Core.Models;
 
 namespace Tweepics.Core.Requests
 {
@@ -13,7 +11,7 @@ namespace Tweepics.Core.Requests
 
     public class TimelineHistorical
     {
-        public List<TweetData> Request(long userID)
+        public List<Tweet> Request(long userID)
         {
             UserTimelineParameters timelineParameters = new UserTimelineParameters
             {
@@ -21,8 +19,8 @@ namespace Tweepics.Core.Requests
                 IncludeRTS = false
             };
 
-            var twitterResponse = Timeline.GetUserTimeline(userID, timelineParameters);
-            var latestException = ExceptionHandler.GetLastException();
+            var twitterResponse = Tweetinvi.Timeline.GetUserTimeline(userID, timelineParameters);
+            var latestException = Tweetinvi.ExceptionHandler.GetLastException();
 
             if (latestException != null)
             {
@@ -36,13 +34,13 @@ namespace Tweepics.Core.Requests
             }
             else
             {
-                List<TweetData> tweetData = new List<TweetData>();
+                List<Tweet> tweetData = new List<Tweet>();
 
                 foreach (var tweet in twitterResponse)
                 {
-                    tweetData.Add(new TweetData(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
-                                                tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
-                                                tweet.FullText));
+                    tweetData.Add(new Tweet(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
+                                            tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
+                                            tweet.FullText));
                 }
 
                 while (tweetData.Count <= 500)
@@ -59,13 +57,13 @@ namespace Tweepics.Core.Requests
                         MaxId = maxTweetID
                     };
 
-                    var tweetsLaterPulls = Timeline.GetUserTimeline(userID, timelineParameters);
+                    var tweetsLaterPulls = Tweetinvi.Timeline.GetUserTimeline(userID, timelineParameters);
 
                     foreach (var tweet in tweetsLaterPulls)
                     {
-                        tweetData.Add(new TweetData(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
-                                                    tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
-                                                    tweet.FullText));
+                        tweetData.Add(new Tweet(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
+                                                tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
+                                                tweet.FullText));
                     }
                 }
 

@@ -1,17 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using Tweetinvi;
 using Tweetinvi.Parameters;
-using Tweepics.Core.Parse;
-using Tweepics.Core.Config;
-using Tweetinvi.Exceptions;
+using Tweepics.Core.Models;
 
 namespace Tweepics.Core.Requests
 {
     public class TimelineCurrent
     {
-        public List<TweetData> Request(long userID, long latestTweetID)
+        public List<Tweet> Request(long userID, long latestTweetID)
         {
             UserTimelineParameters timelineParameters = new UserTimelineParameters
             {
@@ -20,8 +17,8 @@ namespace Tweepics.Core.Requests
                 SinceId = latestTweetID
             };
 
-            var twitterResponse = Timeline.GetUserTimeline(userID, timelineParameters);
-            var latestException = ExceptionHandler.GetLastException();
+            var twitterResponse = Tweetinvi.Timeline.GetUserTimeline(userID, timelineParameters);
+            var latestException = Tweetinvi.ExceptionHandler.GetLastException();
 
             if (latestException != null)
             {
@@ -36,13 +33,13 @@ namespace Tweepics.Core.Requests
             }
             else
             {
-                List<TweetData> tweetData = new List<TweetData>();
+                List<Tweet> tweetData = new List<Tweet>();
 
                 foreach (var tweet in twitterResponse)
                 {
-                    tweetData.Add(new TweetData(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
-                                                tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
-                                                tweet.FullText));
+                    tweetData.Add(new Tweet(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
+                                            tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
+                                            tweet.FullText));
                 }
 
                 DataToFile.Write(userID, tweetData, twitterResponse, "Current");
