@@ -1,6 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using Tweetinvi.Models;
 using Tweetinvi.Parameters;
 using Tweepics.Core.Config;
 using Tweepics.Core.Models;
@@ -16,6 +18,8 @@ namespace Tweepics.Core.Requests
                                               Keys.twitterConsumerSecret,
                                               Keys.twitterAccessToken,
                                               Keys.twitterAccessTokenSecret);
+
+            Tweetinvi.RateLimit.RateLimitTrackerMode = Tweetinvi.RateLimitTrackerMode.TrackAndAwait;
         }
 
         public List<Tweet> GetTimeline(long userID)
@@ -24,6 +28,8 @@ namespace Tweepics.Core.Requests
             long? latestTweetID = tweetReader.FindMostRecentTweetID(userID);
 
             List<Tweet> untaggedTweets = new List<Tweet>();
+
+            Console.WriteLine(Tweetinvi.RateLimit.GetCurrentCredentialsRateLimits());
 
             if (latestTweetID == null)
             {
@@ -45,7 +51,13 @@ namespace Tweepics.Core.Requests
                 SinceId = latestTweetID
             };
 
-            var twitterResponse = Tweetinvi.Timeline.GetUserTimeline(userID, timelineParameters);
+            Task<IEnumerable<ITweet>> userTimlineAsync = 
+                Tweetinvi.Sync.ExecuteTaskAsync(() =>
+                {
+                    return Tweetinvi.Timeline.GetUserTimeline(userID, timelineParameters);
+                });
+
+            var twitterResponse = userTimlineAsync.Result;
             var latestException = Tweetinvi.ExceptionHandler.GetLastException();
 
             if (latestException != null)
@@ -61,17 +73,17 @@ namespace Tweepics.Core.Requests
             }
             else
             {
-                List<Tweet> tweetData = new List<Tweet>();
+                List<Tweet> tweets = new List<Tweet>();
 
                 foreach (var tweet in twitterResponse)
                 {
-                    tweetData.Add(new Tweet(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
+                    tweets.Add(new Tweet(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
                                             tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
                                             tweet.FullText));
                 }
 
-                DataToFile.Write(userID, tweetData, twitterResponse, "Current");
-                return tweetData;
+                DataToFile.Write(userID, tweets, twitterResponse, "Current");
+                return tweets;
             }
         }
 
@@ -86,7 +98,13 @@ namespace Tweepics.Core.Requests
                 IncludeRTS = false
             };
 
-            var twitterResponse = Tweetinvi.Timeline.GetUserTimeline(userID, timelineParameters);
+            Task<IEnumerable<ITweet>> userTimlineAsync = 
+                Tweetinvi.Sync.ExecuteTaskAsync(() =>
+                {
+                    return Tweetinvi.Timeline.GetUserTimeline(userID, timelineParameters);
+                });
+
+            var lastResponse = userTimlineAsync.Result;
             var latestException = Tweetinvi.ExceptionHandler.GetLastException();
 
             if (latestException != null)
@@ -94,29 +112,35 @@ namespace Tweepics.Core.Requests
                 throw new InvalidOperationException
                     ($"{latestException.StatusCode} : {latestException.TwitterDescription}");
             }
-            else if (twitterResponse == null || !twitterResponse.Any())
+            else if (lastResponse == null || !lastResponse.Any())
             {
                 Console.WriteLine($"No tweets were returned for user id {userID}.");
                 return null;
             }
             else
             {
-                List<Tweet> tweetData = new List<Tweet>();
+                List<Tweet> allTweets = new List<Tweet>();
 
-                foreach (var tweet in twitterResponse)
+                foreach (var tweet in lastResponse)
                 {
-                    tweetData.Add(new Tweet(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
+                    allTweets.Add(new Tweet(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
                                             tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
                                             tweet.FullText));
                 }
 
-                while (tweetData.Count <= 500)
+                // More than 5 iterations on one user ID probably means we've encountered a problem
+                // This will serve as our fail-safe for now
+                int iterationCounter = 0;
+
+                while (lastResponse.ToArray().Length > 0 && allTweets.Count <= 500 && iterationCounter <= 5)
                 {
+                    iterationCounter++;
+
                     // Max ID set to lowest tweet ID in our collection (i.e. the oldest tweet) minus 1.
                     // This number serves as a point of reference for requesting tweets older than those
                     // Twitter previously returned.
 
-                    long maxTweetID = tweetData.Min(x => x.TweetID) - 1;
+                    long maxTweetID = allTweets.Min(x => x.TweetID) - 1;
                     timelineParameters = new UserTimelineParameters
                     {
                         MaximumNumberOfTweetsToRetrieve = 200,
@@ -124,18 +148,23 @@ namespace Tweepics.Core.Requests
                         MaxId = maxTweetID
                     };
 
-                    var tweetsLaterPulls = Tweetinvi.Timeline.GetUserTimeline(userID, timelineParameters);
-
-                    foreach (var tweet in tweetsLaterPulls)
+                    userTimlineAsync = Tweetinvi.Sync.ExecuteTaskAsync(() =>
                     {
-                        tweetData.Add(new Tweet(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
+                        return Tweetinvi.Timeline.GetUserTimeline(userID, timelineParameters);
+                    });
+
+                    lastResponse = userTimlineAsync.Result;
+
+                    foreach (var tweet in lastResponse)
+                    {
+                        allTweets.Add(new Tweet(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
                                                 tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
                                                 tweet.FullText));
                     }
                 }
 
-                DataToFile.Write(userID, tweetData, twitterResponse, "Historical");
-                return tweetData;
+                DataToFile.Write(userID, allTweets, lastResponse, "Historical");
+                return allTweets;
             }
         }
     }

@@ -32,13 +32,13 @@ namespace Tweepics.Core.Database
                     string fullName = dataReader[0].ToString();
                     string screenName = dataReader[1].ToString();
                     long userID = Convert.ToInt64(dataReader[2]);
-                    DateTime tweetDateTime = Convert.ToDateTime(dataReader[3]);
+                    DateTime createdAt = Convert.ToDateTime(dataReader[3]);
                     long tweetID = Convert.ToInt64(dataReader[4]);
                     string text = dataReader[5].ToString();
-                    DateTime addedDateTime = Convert.ToDateTime(dataReader[6]);
+                    DateTime addedToDatabaseAt = Convert.ToDateTime(dataReader[6]);
 
-                    tweets.Add(new Tweet(fullName, screenName, userID, tweetDateTime,
-                                             tweetID, text, addedDateTime));
+                    tweets.Add(new Tweet(fullName, screenName, userID, createdAt,
+                                             tweetID, text, addedToDatabaseAt));
                 }
                 dataReader.Close();
                 connection.Close();
@@ -105,11 +105,11 @@ namespace Tweepics.Core.Database
                     string fullName = dataReader[0].ToString();
                     string screenName = dataReader[1].ToString();
                     long userID = Convert.ToInt64(dataReader[2]);
-                    DateTime tweetDateTime = Convert.ToDateTime(dataReader[3]);
+                    DateTime createdAt = Convert.ToDateTime(dataReader[3]);
                     long tweetID = Convert.ToInt64(dataReader[4]);
                     string tweetText = dataReader[5].ToString();
 
-                    tweets.Add(new Tweet(fullName, screenName, userID, tweetDateTime, tweetID, tweetText));
+                    tweets.Add(new Tweet(fullName, screenName, userID, createdAt, tweetID, tweetText));
                 }
                 dataReader.Close();
                 connection.Close();

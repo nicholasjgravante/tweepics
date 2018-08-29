@@ -8,10 +8,10 @@ namespace Tweepics.Core.Models
         public string FullName { get; set; }
         public string ScreenName { get; set; }
         public long UserID { get; set; }
-        public DateTime TweetDateTime { get; set; }
+        public DateTime CreatedAt { get; set; }
         public long TweetID { get; set; }
         public string Text { get; set; }
-        public DateTime AddedDateTime { get; set; }
+        public DateTime AddedToDatabaseAt { get; set; }
 
         public Tweet() { }
 
@@ -25,10 +25,10 @@ namespace Tweepics.Core.Models
             FullName = fullName;
             ScreenName = screenName;
             UserID = userID;
-            TweetDateTime = tweetDateTime;
+            CreatedAt = tweetDateTime;
             TweetID = tweetID;
             Text = HttpUtility.HtmlDecode(tweetText);
-            AddedDateTime = addedDateTime;
+            AddedToDatabaseAt = addedDateTime;
         }
     }
 }

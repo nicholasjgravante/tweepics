@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 using Tweepics.Core.Models;
-using Tweepics.Core.Config;
 
 namespace Tweepics.Core.Database
 {
@@ -31,7 +30,7 @@ namespace Tweepics.Core.Database
                     cmd.Parameters.Add("@full_name", MySqlDbType.VarChar).Value = tweet.FullName;
                     cmd.Parameters.Add("@screen_name", MySqlDbType.VarChar).Value = tweet.ScreenName;
                     cmd.Parameters.Add("@user_id", MySqlDbType.Int64).Value = tweet.UserID;
-                    cmd.Parameters.Add("@tweet_datetime", MySqlDbType.DateTime).Value = tweet.TweetDateTime;
+                    cmd.Parameters.Add("@tweet_datetime", MySqlDbType.DateTime).Value = tweet.CreatedAt;
                     cmd.Parameters.Add("@tweet_id", MySqlDbType.Int64).Value = tweet.TweetID;
                     cmd.Parameters.Add("@tweet_text", MySqlDbType.VarChar).Value = tweet.Text;
                     cmd.Parameters.Add("@added_datetime", MySqlDbType.DateTime).Value = now;
