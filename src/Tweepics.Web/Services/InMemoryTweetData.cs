@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Tweepics.Core.Models;
 using Tweepics.Core.Database;
+using System.Linq;
 
 namespace Tweepics.Web.Services
 {
@@ -33,7 +34,15 @@ namespace Tweepics.Web.Services
             List<Tweet> tweets = new List<Tweet>();
             tweets = tweetFinder.FindTweetsByTag(tag);
 
-            return tweets;
+            if (tweets == null)
+            {
+                return null;
+            }
+            else
+            {
+                tweets = tweets.OrderByDescending(tweet => tweet.CreatedAt).ToList();
+                return tweets;
+            }
         }
     }
 }
