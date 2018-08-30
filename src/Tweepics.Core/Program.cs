@@ -27,13 +27,12 @@ namespace Tweepics
                 untaggedTweets = timeline.GetTimeline(ID);
 
                 if (untaggedTweets == null)
-                {
-                    Console.WriteLine($"No tweets returned for user {ID}.");
                     continue;
-                }
 
                 TweetAdder tweetAdder = new TweetAdder(Keys.mySqlConnectionString);
                 tweetAdder.AddUntaggedTweets(untaggedTweets);
+
+                Console.WriteLine($"{untaggedTweets.Count} tweets were added for user {ID}.");
 
                 TagReader tagReader = new TagReader(Keys.mySqlConnectionString);
                 List<Tag> tags = new List<Tag>();
@@ -45,7 +44,7 @@ namespace Tweepics
 
                 tweetAdder.AddTaggedTweets(taggedTweets);
 
-                Console.WriteLine($"{taggedTweets.Count} tweets have been added for user {ID}.");
+                Console.WriteLine($"{taggedTweets.Count} tweets were tagged and added for user {ID}.");
             }
 
             Console.WriteLine("The program ran to completion.");
