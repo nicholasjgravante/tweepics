@@ -32,9 +32,11 @@ namespace Tweepics.Core.Parse
                 DateTime tweetDateTime = DateTime.Parse(splitRawTweet[3]);
                 long tweetId = Convert.ToInt64(splitRawTweet[4]);
                 string tweetText = splitRawTweet[5];
+                string url = splitRawTweet[6];
+                string html = splitRawTweet[7];
 
-                tweets.Add(new Tweet(fullName, screenName, userId, 
-                                         tweetDateTime, tweetId, tweetText));
+                tweets.Add(new Tweet(fullName, screenName, userId, tweetDateTime, 
+                                     tweetId, tweetText, url, html));
             }
             return tweets;
         }

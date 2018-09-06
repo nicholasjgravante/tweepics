@@ -5,6 +5,10 @@ using Tweepics.Core.Models;
 using Tweepics.Core.Tagging;
 using Tweepics.Core.Requests;
 using Tweepics.Core.Database;
+using System.Net;
+using System.IO;
+using Tweetinvi.Logic.Model;
+using Tweetinvi.Models.DTO;
 
 namespace Tweepics
 {
@@ -14,9 +18,9 @@ namespace Tweepics
         {
             List<long> userIDs = new List<long>
             {
-                30354991, // Kamala Harris
-                29442313, // Bernie Sanders
-                15808765  // Cory Booker
+            30354991, // Kamala Harris
+            29442313, // Bernie Sanders
+            15808765  // Cory Booker
             };
 
             Timeline timeline = new Timeline();

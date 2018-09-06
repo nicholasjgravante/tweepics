@@ -23,7 +23,7 @@ namespace Tweepics.Core.Requests
                 foreach (var tweet in tweets)
                 {
                     tweetDataFile.WriteLine($"{tweet.FullName} ||||| {tweet.ScreenName} ||||| {tweet.UserID} ||||| " +
-                        $"{tweet.CreatedAt} ||||| {tweet.TweetID} ||||| {tweet.Text} *****");
+                        $"{tweet.CreatedAt} ||||| {tweet.TweetID} ||||| {tweet.Text} ||||| {tweet.Url} ||||| {tweet.Html} *****");
                 }
             }
 

@@ -8,6 +8,7 @@ using Tweepics.Core.Config;
 using Tweepics.Core.Models;
 using Tweepics.Core.Database;
 using System.Threading;
+using Tweetinvi.Models.DTO;
 
 namespace Tweepics.Core.Requests
 {
@@ -99,9 +100,14 @@ namespace Tweepics.Core.Requests
 
                 foreach (var tweet in twitterResponse)
                 {
+                    var oembedTweet = Tweetinvi.TwitterAccessor.ExecuteGETQuery<IOEmbedTweetDTO>
+                        ($"https://publish.twitter.com/oembed?url={tweet.Url}");
+
+                    RequestsRemaining--;
+
                     tweets.Add(new Tweet(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
                                          tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
-                                         tweet.FullText));
+                                         tweet.FullText, tweet.Url, oembedTweet.HTML));
                 }
 
                 DataToFile.Write(userID, tweets, twitterResponse, "Current");
@@ -109,7 +115,7 @@ namespace Tweepics.Core.Requests
             }
         }
 
-        // Iterate through a user's timeline to capture their latest 500 tweets
+        // Iterate through a user's timeline to capture their latest {###} tweets
         // as a means of gathering a large set of initial data.
 
         public List<Tweet> Historical(long userID)
@@ -147,12 +153,17 @@ namespace Tweepics.Core.Requests
 
                 foreach (var tweet in lastResponse)
                 {
+                    var oembedTweet = Tweetinvi.TwitterAccessor.ExecuteGETQuery<IOEmbedTweetDTO>
+                        ($"https://publish.twitter.com/oembed?url={tweet.Url}");
+
+                    RequestsRemaining--;
+
                     allTweets.Add(new Tweet(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
-                                            tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
-                                            tweet.FullText));
+                                         tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
+                                         tweet.FullText, tweet.Url, oembedTweet.HTML));
                 }
 
-                while (lastResponse.ToArray().Length > 0 && allTweets.Count <= 500 && RequestsRemaining >= 10)
+                while (lastResponse.ToArray().Length > 0 && allTweets.Count <= 200 && RequestsRemaining >= 10)
                 {
                     // Max ID set to lowest tweet ID in our collection (i.e. the oldest tweet) minus 1.
                     // This number serves as a point of reference for requesting tweets older than those
@@ -178,9 +189,14 @@ namespace Tweepics.Core.Requests
 
                     foreach (var tweet in lastResponse)
                     {
+                        var oembedTweet = Tweetinvi.TwitterAccessor.ExecuteGETQuery<IOEmbedTweetDTO>
+                            ($"https://publish.twitter.com/oembed?url={tweet.Url}");
+
+                        RequestsRemaining--;
+
                         allTweets.Add(new Tweet(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
-                                                tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
-                                                tweet.FullText));
+                                             tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
+                                             tweet.FullText, tweet.Url, oembedTweet.HTML));
                     }
                 }
 

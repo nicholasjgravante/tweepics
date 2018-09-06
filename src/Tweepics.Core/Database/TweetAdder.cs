@@ -23,9 +23,9 @@ namespace Tweepics.Core.Database
                     {
                         Connection = connection,
                         CommandText = @"INSERT INTO tweet_data (full_name, screen_name, user_id, tweet_datetime, 
-                                    tweet_id, tweet_text, added_datetime)
+                                    tweet_id, tweet_text, url, html, added_datetime)
                                     VALUES (@full_name, @screen_name, @user_id, @tweet_datetime, 
-                                    @tweet_id, @tweet_text, @added_datetime)"
+                                    @tweet_id, @tweet_text, @url, @html, @added_datetime)"
                     };
                     cmd.Parameters.Add("@full_name", MySqlDbType.VarChar).Value = tweet.FullName;
                     cmd.Parameters.Add("@screen_name", MySqlDbType.VarChar).Value = tweet.ScreenName;
@@ -33,6 +33,8 @@ namespace Tweepics.Core.Database
                     cmd.Parameters.Add("@tweet_datetime", MySqlDbType.DateTime).Value = tweet.CreatedAt;
                     cmd.Parameters.Add("@tweet_id", MySqlDbType.Int64).Value = tweet.TweetID;
                     cmd.Parameters.Add("@tweet_text", MySqlDbType.VarChar).Value = tweet.Text;
+                    cmd.Parameters.Add("@url", MySqlDbType.VarChar).Value = tweet.Url;
+                    cmd.Parameters.Add("@html", MySqlDbType.VarChar).Value = tweet.Html;
                     cmd.Parameters.Add("@added_datetime", MySqlDbType.DateTime).Value = now;
 
                     cmd.Prepare();
