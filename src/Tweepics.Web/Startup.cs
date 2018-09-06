@@ -44,6 +44,8 @@ namespace Tweepics.Web
 
             app.UseStaticFiles();
 
+            app.UseNodeModules(env.ContentRootPath);
+
             // Start - Added for apache - kestrel reverse proxy
             app.UseForwardedHeaders();
             app.UseAuthentication();
