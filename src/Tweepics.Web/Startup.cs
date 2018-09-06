@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -37,6 +38,9 @@ namespace Tweepics.Web
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseRewriter(new RewriteOptions()
+                                .AddRedirectToHttpsPermanent());
 
             app.UseStaticFiles();
 
