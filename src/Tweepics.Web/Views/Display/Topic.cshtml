@@ -9,12 +9,10 @@
         @foreach (var tweet in Model)
         {
             <tr>
-                <td>@tweet.FullName</td>
-                <td>@tweet.CreatedAt</td>
-                <td>@tweet.TweetID</td>
-                <td>@tweet.Text</td>
+                <td>@Html.Raw(tweet.Html)</td>
             </tr>
         }
     </table>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </body>
 </html>
