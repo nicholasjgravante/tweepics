@@ -1,21 +1,14 @@
 ﻿@model IEnumerable<string>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title></title>
-</head>
-<body>
-    <table>
-        @foreach (var tag in Model)
-        {
-            <tr>
-                <td>
-                    <a asp-action="Topic"
-                       asp-controller="Display"
-                       asp-route-tag="@tag">@tag</a>
-                </td>
-            </tr>
-        }
-    </table>
-</body>
-</html>
+<table>
+    @foreach (var tag in Model)
+    {
+        <tr>
+            <td>
+                <a asp-action="Topic"
+                   asp-controller="Display"
+                   asp-route-tag="@tag">@tag</a>
+            </td>
+        </tr>
+    }
+</table>
