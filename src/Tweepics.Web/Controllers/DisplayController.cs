@@ -30,7 +30,7 @@ namespace Tweepics.Web.Controllers
 
         public IActionResult Topic(string tag)
         {
-            List<string> tags = _tagData.GetAll();
+            List<string> tags = _tagData.GetAllTags();
 
             if(!tags.Contains(tag))
             {

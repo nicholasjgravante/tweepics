@@ -1,17 +1,26 @@
-﻿@model IEnumerable<string>
+﻿@model List<List<string>>
 
-    <h1>hello from h1</h1>
-    <h2>greetings from h2</h2>
-    <h3>good day from h3</h3>
-    <table>
-        @foreach (var tag in Model)
-        {
-            <tr>
-                <td>
-                    <a asp-action="Topic"
-                       asp-controller="Display"
+<h1>hello from h1</h1>
+<h2>greetings from h2</h2>
+<h3>good day from h3</h3>
+
+@{
+    ViewBag.Title = "Home";
+    ViewBag.CssClass = "container-fluid tags-background";
+}
+
+<div class="container">
+    @foreach (var listOfThree in Model)
+    {
+        <div class="row">
+            @foreach (var tag in listOfThree)
+            {
+                <div class="col">
+                    <a class="tags-primary"
+                       asp-action="Topic" asp-controller="Display"
                        asp-route-tag="@tag">@tag</a>
-                </td>
-            </tr>
-        }
-    </table>
+                </div>
+            }
+        </div>
+    }
+</div>
