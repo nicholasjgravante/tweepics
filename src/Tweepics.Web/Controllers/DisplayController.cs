@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Tweepics.Core.Models;
 using Tweepics.Web.Services;
+using Tweepics.Web.ViewModels.Display;
 
 namespace Tweepics.Web.Controllers
 {
@@ -32,17 +34,22 @@ namespace Tweepics.Web.Controllers
         {
             List<string> tags = _tagData.GetAllTags();
 
-            if(!tags.Contains(tag))
+            if (!tags.Contains(tag))
             {
                 return Content("No such tag was found.");
             }
 
-            var model = _tweetData.FindByTag(tag);
+            List<Tweet> tweets = _tweetData.FindByTag(tag);
 
-            if(model==null)
+            var model = new DisplayTweetsViewModel();
+            model.Tweets = tweets;
+            model.Topic = tag;
+
+            if (model.Tweets == null)
             {
                 return Content("No tweets were found.");
             }
+
             return View(model);
         }
     }

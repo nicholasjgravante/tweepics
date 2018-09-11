@@ -1,11 +1,19 @@
-﻿@model IEnumerable<Tweepics.Core.Models.Tweet>
+﻿@model Tweepics.Web.ViewModels.Display.DisplayTweetsViewModel
 
-<table>
-    @foreach (var tweet in Model)
+@{
+    ViewBag.Title = Model.Topic;
+}
+
+<div class="container">
+    @foreach (var tweet in Model.Tweets)
     {
-        <tr>
-            <td>@Html.Raw(tweet.Html)</td>
-        </tr>
+        <div class="row">
+            <div class="col-sm-5">
+            </div>
+            <div class="col-sm-7">
+                @Html.Raw(tweet.Html)
+            </div>
+        </div>
     }
-</table>
+</div>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
