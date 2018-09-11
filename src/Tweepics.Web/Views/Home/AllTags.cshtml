@@ -1,13 +1,14 @@
 ﻿@model List<List<string>>
 
-<h1>hello from h1</h1>
-<h2>greetings from h2</h2>
-<h3>good day from h3</h3>
-
 @{
     ViewBag.Title = "Home";
     ViewBag.CssClass = "container-fluid tags-background";
+    ViewBag.Navbar = "navbar-all-tags";
 }
+
+<h1 class="all-tags-h1">
+    h1 text will go here
+</h1>
 
 <div class="container">
     @foreach (var listOfThree in Model)
@@ -16,9 +17,13 @@
             @foreach (var tag in listOfThree)
             {
                 <div class="col">
-                    <a class="tags-primary"
-                       asp-action="Topic" asp-controller="Display"
-                       asp-route-tag="@tag">@tag</a>
+                    @if (!string.IsNullOrEmpty(tag))
+                    {
+                        <a class="tags-primary"
+                           asp-action="Topic" asp-controller="Display"
+                           asp-route-tag="@tag">@tag</a>
+                    }
+
                 </div>
             }
         </div>
