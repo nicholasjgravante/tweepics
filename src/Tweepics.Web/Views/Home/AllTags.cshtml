@@ -1,31 +1,49 @@
-﻿@model List<List<string>>
+﻿@model List<string>
 
 @{
-    ViewBag.Title = "Home";
+    ViewBag.Title = "Tweepics";
     ViewBag.CssClass = "container-fluid tags-background";
     ViewBag.Navbar = "navbar-all-tags";
 }
 
-<h1 class="all-tags-h1">
-    h1 text will go here
-</h1>
-
-<div class="container">
-    @foreach (var listOfThree in Model)
-    {
-        <div class="row">
-            @foreach (var tag in listOfThree)
-            {
+<h1 class="home-slogan">One Nation under 280 characters</h1>
+<div class="vertical-center">
+    <div class="container">
+        @for (int i = 0; i < Model.Count; i += 3)
+        {
+            <div class="row">
                 <div class="col">
-                    @if (!string.IsNullOrEmpty(tag))
-                    {
-                        <a class="tags-primary"
-                           asp-action="Topic" asp-controller="Display"
-                           asp-route-tag="@tag">@tag</a>
-                    }
-
+                    <a class="btn btn-block tags-primary"
+                       asp-action="Topic" asp-controller="Display"
+                       asp-route-tag="@Model[i]">@Model[i]</a>
                 </div>
-            }
-        </div>
-    }
+                <div class="col">
+                    @if (i + 1 < Model.Count)
+                    {
+                        <a class="btn btn-block tags-primary"
+                           asp-action="Topic" asp-controller="Display"
+                           asp-route-tag="@Model[i + 1]">@Model[i + 1]</a>
+                    }
+                    else
+                    {
+                        <div>
+                        </div>
+                    }
+                </div>
+                <div class="col">
+                    @if (i + 2 < Model.Count)
+                    {
+                        <a class="btn btn-block tags-primary"
+                           asp-action="Topic" asp-controller="Display"
+                           asp-route-tag="@Model[i + 2]">@Model[i + 2]</a>
+                    }
+                    else
+                    {
+                        <div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
 </div>

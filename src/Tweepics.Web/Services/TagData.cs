@@ -30,48 +30,5 @@ namespace Tweepics.Web.Services
 
             return tagCategories;
         }
-
-        public List<List<string>> TagsInSublists()
-        {
-            connectionString = _configuration["ConnectionString"];
-
-            TagReader tagReader = new TagReader(connectionString);
-            List<Tag> tagsAllData = new List<Tag>();
-            tagsAllData = tagReader.ReadAll();
-
-            List<string> tags = new List<string>();
-            tags = tagsAllData.Select(tag => tag.Name).ToList();
-
-            List<List<string>> tagsInThrees = new List<List<string>>();
-            List<string> intermediaryList = new List<string>();
-
-            while (tags.Count > 0)
-            {
-                if (tags.Count >= 3)
-                {
-                    tagsInThrees.Add(new List<string> { tags[0], tags[1], tags[2] });
-
-                    tags.RemoveAt(2);
-                    tags.RemoveAt(1);
-                    tags.RemoveAt(0);
-                }
-
-                else if (tags.Count == 2)
-                {
-                    tagsInThrees.Add(new List<string> { tags[0], tags[1], "" });
-
-                    tags.RemoveAt(1);
-                    tags.RemoveAt(0);
-                }
-
-                else if (tags.Count == 1)
-                {
-                    tagsInThrees.Add(new List<string> { tags[0], "", ""});
-
-                    tags.RemoveAt(0);
-                }
-            }
-            return tagsInThrees;
-        }
     }
 }

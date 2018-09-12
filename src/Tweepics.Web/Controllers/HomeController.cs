@@ -14,7 +14,7 @@ namespace Tweepics.Web.Controllers
 
         public IActionResult AllTags()
         {
-            var model = _tags.TagsInSublists();
+            var model = _tags.GetAllTags();
 
             return View(model);
         }

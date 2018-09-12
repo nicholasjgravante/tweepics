@@ -5,6 +5,5 @@ namespace Tweepics.Web.Services
     public interface ITags
     {
         List<string> GetAllTags();
-        List<List<string>> TagsInSublists();
     }
 }
