@@ -1,19 +1,46 @@
 ﻿@model Tweepics.Web.ViewModels.Display.DisplayTweetsViewModel
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
 
 @{
     ViewBag.Title = Model.Topic;
 }
 
 <div class="container">
-    @foreach (var tweet in Model.Tweets)
-    {
-        <div class="row">
-            <div class="col-sm-5">
-            </div>
-            <div class="col-sm-7">
-                @Html.Raw(tweet.Html)
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="card">
+                <div class="card-body">
+                    FILTER GOES HERE
+                </div>
             </div>
         </div>
-    }
+        <div class="col-sm-1">
+        </div>
+        <div class="col-sm-8">
+            @for (int i = 0; i < Model.Tweets.Count; i += 2)
+            {
+                <div class="row">
+                    <div class="col-sm-6">
+                        @Html.Raw(Model.Tweets[i].Html)
+                    </div>
+                    @if (i + 1 < Model.Tweets.Count)
+                    {
+                        <div class="col-sm-6">
+                            @Html.Raw(Model.Tweets[i + 1].Html)
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
 </div>
+@section footer {
+    @Html.PagedListPager( (IPagedList)Model.Tweets, page=>Url.Action("Topic", new { tag=Model.Topic, page}),
+    new PagedListRenderOptions { ContainerDivClasses = new List<string> {},
+        UlElementClasses = new List<string> { "pagination justify-content-center" },
+        LiElementClasses = new List<string> { "page-item" },
+        PageClasses = new List<string> { "page-link" } })
+}
+
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>

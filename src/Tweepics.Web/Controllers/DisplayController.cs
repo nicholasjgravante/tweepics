@@ -4,6 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Tweepics.Core.Models;
 using Tweepics.Web.Services;
 using Tweepics.Web.ViewModels.Display;
+using X.PagedList;
+using X.PagedList.Mvc.Core;
 
 namespace Tweepics.Web.Controllers
 {
@@ -30,7 +32,7 @@ namespace Tweepics.Web.Controllers
             return View(model);
         }
 
-        public IActionResult Topic(string tag)
+        public IActionResult Topic(string tag, int? page)
         {
             List<string> tags = _tagData.GetAllTags();
 
@@ -41,16 +43,22 @@ namespace Tweepics.Web.Controllers
 
             List<Tweet> tweets = _tweetData.FindByTag(tag);
 
-            var model = new DisplayTweetsViewModel();
-            model.Tweets = tweets;
-            model.Topic = tag;
-
-            if (model.Tweets == null)
+            if (tweets == null)
             {
                 return Content("No tweets were found.");
             }
+            else
+            {
+                var pageNumber = page ?? 1;
+                var onePageOfTweets = tweets.ToPagedList(pageNumber, 25);
 
-            return View(model);
+                var model = new DisplayTweetsViewModel();
+                model.Tweets = onePageOfTweets;
+                model.Topic = tag;
+                model.ThirtyDayCount = TweetMetrics.TweetsInLastThirtyDays(tweets);
+
+                return View(model);
+            }
         }
     }
 }
