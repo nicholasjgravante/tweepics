@@ -34,8 +34,8 @@ namespace Tweepics.Core.Database
                     string middleName = dataReader[2].ToString();
                     string lastName = dataReader[3].ToString();
                     string fullName = dataReader[4].ToString();
-                    string state = dataReader[6].ToString();
-                    string party = dataReader[5].ToString();
+                    string state = dataReader[5].ToString();
+                    string party = dataReader[6].ToString();
                     long twitterId = Convert.ToInt64(dataReader[7]);
                     string twitterScreenName = dataReader[8].ToString();
 
