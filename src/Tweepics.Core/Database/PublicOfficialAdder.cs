@@ -26,10 +26,10 @@ namespace Tweepics.Core.Database
                                         ON DUPLICATE KEY UPDATE middle_name=@middle_name"
                     };
                     cmd.Parameters.Add("@tweepics_id", MySqlDbType.VarChar).Value = official.TweepicsId;
-                    cmd.Parameters.Add("@first_name", MySqlDbType.VarChar).Value = official.FirstName;
-                    cmd.Parameters.Add("@middle_name", MySqlDbType.VarChar).Value = official.MiddleName;
-                    cmd.Parameters.Add("@last_name", MySqlDbType.VarChar).Value = official.LastName;
-                    cmd.Parameters.Add("@full_name", MySqlDbType.VarChar).Value = official.FullName;
+                    cmd.Parameters.Add("@first_name", MySqlDbType.VarChar).Value = official.Name.First;
+                    cmd.Parameters.Add("@middle_name", MySqlDbType.VarChar).Value = official.Name.Middle;
+                    cmd.Parameters.Add("@last_name", MySqlDbType.VarChar).Value = official.Name.Last;
+                    cmd.Parameters.Add("@full_name", MySqlDbType.VarChar).Value = official.Name.Full;
                     cmd.Parameters.Add("@state", MySqlDbType.VarChar).Value = official.State;
                     cmd.Parameters.Add("@party", MySqlDbType.VarChar).Value = official.Party;
                     cmd.Parameters.Add("@twitter_id", MySqlDbType.Int64).Value = official.TwitterId;

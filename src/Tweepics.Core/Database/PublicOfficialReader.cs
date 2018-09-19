@@ -33,14 +33,14 @@ namespace Tweepics.Core.Database
                     string firstName = dataReader[1].ToString();
                     string middleName = dataReader[2].ToString();
                     string lastName = dataReader[3].ToString();
-                    string fullName = dataReader[4].ToString();
                     string state = dataReader[5].ToString();
                     string party = dataReader[6].ToString();
                     long twitterId = Convert.ToInt64(dataReader[7]);
                     string twitterScreenName = dataReader[8].ToString();
 
-                    representatives.Add(new PublicOfficial(tweepicsId, firstName, middleName, lastName, 
-                                                           state, party, twitterId, twitterScreenName));
+                    Name name = new Name(firstName, middleName, lastName);
+
+                    representatives.Add(new PublicOfficial(tweepicsId, name, state, party, twitterId, twitterScreenName));
                 }
                 dataReader.Close();
                 connection.Close();
@@ -74,8 +74,9 @@ namespace Tweepics.Core.Database
                     long twitterId = Convert.ToInt64(oneLineOfData[6]);
                     string twitterScreenName = oneLineOfData[7];
 
-                    officials.Add(new PublicOfficial(tweepicsId, firstName, middleName, lastName,
-                                                     state, party, twitterId, twitterScreenName));
+                    Name name = new Name(firstName, middleName, lastName);
+
+                    officials.Add(new PublicOfficial(tweepicsId, name, state, party, twitterId, twitterScreenName));
                 }
                 else
                     break;
