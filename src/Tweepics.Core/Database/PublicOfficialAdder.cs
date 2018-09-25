@@ -1,4 +1,5 @@
 ﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using Tweepics.Core.Models;
 
@@ -16,20 +17,23 @@ namespace Tweepics.Core.Database
 
                 foreach (var official in officials)
                 {
+                    Guid guid = Guid.NewGuid();
+                    string officialTweepicsId = guid.ToString();
+
                     MySqlCommand cmd = new MySqlCommand
                     {
                         Connection = connection,
-                        CommandText = @"INSERT INTO representative_information (tweepics_id, first_name, middle_name, 
-                                        last_name, full_name, state, party, twitter_id, twitter_screen_name)
-                                        VALUES (@tweepics_id, @first_name, @middle_name, @last_name, @full_name, 
+                        CommandText = @"INSERT INTO rep_info (tweepics_id, first_name, middle_name, 
+                                        last_name, suffix, state, party, twitter_id, twitter_screen_name)
+                                        VALUES (@tweepics_id, @first_name, @middle_name, @last_name, @suffix, 
                                         @state, @party, @twitter_id, @twitter_screen_name)
                                         ON DUPLICATE KEY UPDATE middle_name=@middle_name"
                     };
-                    cmd.Parameters.Add("@tweepics_id", MySqlDbType.VarChar).Value = official.TweepicsId;
+                    cmd.Parameters.Add("@tweepics_id", MySqlDbType.VarChar).Value = officialTweepicsId;
                     cmd.Parameters.Add("@first_name", MySqlDbType.VarChar).Value = official.Name.First;
                     cmd.Parameters.Add("@middle_name", MySqlDbType.VarChar).Value = official.Name.Middle;
                     cmd.Parameters.Add("@last_name", MySqlDbType.VarChar).Value = official.Name.Last;
-                    cmd.Parameters.Add("@full_name", MySqlDbType.VarChar).Value = official.Name.Full;
+                    cmd.Parameters.Add("@suffix", MySqlDbType.VarChar).Value = official.Name.Suffix;
                     cmd.Parameters.Add("@state", MySqlDbType.VarChar).Value = official.State;
                     cmd.Parameters.Add("@party", MySqlDbType.VarChar).Value = official.Party;
                     cmd.Parameters.Add("@twitter_id", MySqlDbType.Int64).Value = official.TwitterId;

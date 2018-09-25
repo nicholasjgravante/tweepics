@@ -17,12 +17,12 @@ namespace Tweepics.Core.Database
             {
                 connection.Open();
 
-                List<PublicOfficial> representatives = new List<PublicOfficial>();
+                List<PublicOfficial> officials = new List<PublicOfficial>();
 
                 MySqlCommand cmd = new MySqlCommand
                 {
                     Connection = connection,
-                    CommandText = @"SELECT * from representative_information"
+                    CommandText = @"SELECT * from rep_info"
                 };
 
                 MySqlDataReader dataReader = cmd.ExecuteReader();
@@ -33,19 +33,20 @@ namespace Tweepics.Core.Database
                     string firstName = dataReader[1].ToString();
                     string middleName = dataReader[2].ToString();
                     string lastName = dataReader[3].ToString();
+                    string suffix = dataReader[4].ToString();
                     string state = dataReader[5].ToString();
                     string party = dataReader[6].ToString();
                     long twitterId = Convert.ToInt64(dataReader[7]);
                     string twitterScreenName = dataReader[8].ToString();
 
-                    Name name = new Name(firstName, middleName, lastName);
+                    Name name = new Name(firstName, middleName, lastName, suffix);
 
-                    representatives.Add(new PublicOfficial(tweepicsId, name, state, party, twitterId, twitterScreenName));
+                    officials.Add(new PublicOfficial(tweepicsId, name, state, party, twitterId, twitterScreenName));
                 }
                 dataReader.Close();
                 connection.Close();
 
-                return representatives;
+                return officials;
             }
         }
 
@@ -65,18 +66,24 @@ namespace Tweepics.Core.Database
 
                 if (oneLineOfData.Any())
                 {
-                    string tweepicsId = oneLineOfData[0];
-                    string firstName = oneLineOfData[1];
-                    string middleName = oneLineOfData[2];
-                    string lastName = oneLineOfData[3];
+                    string firstName = oneLineOfData[0];
+                    string middleName = oneLineOfData[1];
+                    string lastName = oneLineOfData[2];
+                    string suffix = oneLineOfData[3];
                     string state = oneLineOfData[4];
                     string party = oneLineOfData[5];
-                    long twitterId = Convert.ToInt64(oneLineOfData[6]);
+                    long twitterId = 0;
+
+                    if (oneLineOfData[6] != string.Empty)
+                    {
+                        twitterId = Convert.ToInt64(oneLineOfData[6]);
+                    }
+
                     string twitterScreenName = oneLineOfData[7];
 
-                    Name name = new Name(firstName, middleName, lastName);
+                    Name name = new Name(firstName, middleName, lastName, suffix);
 
-                    officials.Add(new PublicOfficial(tweepicsId, name, state, party, twitterId, twitterScreenName));
+                    officials.Add(new PublicOfficial(name, state, party, twitterId, twitterScreenName));
                 }
                 else
                     break;
