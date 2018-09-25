@@ -39,7 +39,7 @@ namespace Tweepics.Core.Database
                     string html = dataReader[7].ToString();
                     DateTime addedToDatabaseAt = Convert.ToDateTime(dataReader[8]);
 
-                    tweets.Add(new Tweet(fullName, screenName, userID, createdAt, tweetID, 
+                    tweets.Add(new Tweet(fullName, screenName, userID, createdAt, tweetID,
                                          text, url, html, addedToDatabaseAt));
                 }
                 dataReader.Close();
@@ -48,7 +48,7 @@ namespace Tweepics.Core.Database
             }
         }
 
-        public long? FindMostRecentTweetID(long userID)
+        public long? FindMostRecentTweetId(long userID)
         {
             using (MySqlConnection connection = new MySqlConnection(_connectionString))
             {
@@ -66,12 +66,39 @@ namespace Tweepics.Core.Database
                 if (dataReader[0] == DBNull.Value)
                     return null;
 
-                long mostRecentTweetID = Convert.ToInt64(dataReader[0]);
+                long mostRecentTweetId = Convert.ToInt64(dataReader[0]);
 
                 dataReader.Close();
                 connection.Close();
 
-                return mostRecentTweetID;
+                return mostRecentTweetId;
+            }
+        }
+
+        public long? FindOldestTweetId(long userID)
+        {
+            using (MySqlConnection connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+                MySqlCommand cmd = new MySqlCommand
+                {
+                    Connection = connection,
+                    CommandText = @"SELECT MIN(tweet_id) FROM tweet_data WHERE user_id = @user_id"
+                };
+                cmd.Parameters.AddWithValue("@user_id", userID);
+
+                MySqlDataReader dataReader = cmd.ExecuteReader();
+                dataReader.Read();
+
+                if (dataReader[0] == DBNull.Value)
+                    return null;
+
+                long oldestTweetId = Convert.ToInt64(dataReader[0]);
+
+                dataReader.Close();
+                connection.Close();
+
+                return oldestTweetId;
             }
         }
 
@@ -113,7 +140,80 @@ namespace Tweepics.Core.Database
                     string url = dataReader[6].ToString();
                     string html = dataReader[7].ToString();
 
-                    tweets.Add(new Tweet(fullName, screenName, userID, createdAt, tweetID, 
+                    tweets.Add(new Tweet(fullName, screenName, userID, createdAt, tweetID,
+                                         text, url, html));
+                }
+                dataReader.Close();
+                connection.Close();
+                return tweets;
+            }
+        }
+
+        public Dictionary<long, int> CountTweetFrequencyByUser()
+        {
+
+            using (MySqlConnection connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                Dictionary<long, int> tweetFrequency = new Dictionary<long, int>();
+
+                MySqlCommand cmd = new MySqlCommand
+                {
+                    Connection = connection,
+                    CommandText = @"SELECT user_id, COUNT(*) FROM tweet_data GROUP BY user_id"
+                };
+
+                MySqlDataReader dataReader = cmd.ExecuteReader();
+
+                if (!dataReader.HasRows)
+                    return null;
+
+                while (dataReader.Read())
+                {
+                    long userId = Convert.ToInt64(dataReader[0]);
+                    int tweetCount = Convert.ToInt32(dataReader[1]);
+
+                    tweetFrequency.Add(userId, tweetCount);
+                }
+                dataReader.Close();
+                connection.Close();
+                return tweetFrequency;
+            }
+        }
+
+        public List<Tweet> GetUserTweets(long userId)
+        {
+            using (MySqlConnection connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                List<Tweet> tweets = new List<Tweet>();
+
+                MySqlCommand cmd = new MySqlCommand
+                {
+                    Connection = connection,
+                    CommandText = @"SELECT * FROM tweet_data WHERE user_id = @user_id"
+                };
+                cmd.Parameters.AddWithValue("@user_id", userId);
+
+                MySqlDataReader dataReader = cmd.ExecuteReader();
+
+                if (!dataReader.HasRows)
+                    return null;
+
+                while (dataReader.Read())
+                {
+                    string fullName = dataReader[0].ToString();
+                    string screenName = dataReader[1].ToString();
+                    long userID = Convert.ToInt64(dataReader[2]);
+                    DateTime createdAt = Convert.ToDateTime(dataReader[3]);
+                    long tweetID = Convert.ToInt64(dataReader[4]);
+                    string text = dataReader[5].ToString();
+                    string url = dataReader[6].ToString();
+                    string html = dataReader[7].ToString();
+
+                    tweets.Add(new Tweet(fullName, screenName, userID, createdAt, tweetID,
                                          text, url, html));
                 }
                 dataReader.Close();
