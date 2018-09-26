@@ -6,22 +6,22 @@ namespace Tweepics.Core.Models
     {
         public string TweepicsId { get; set; }
         public Name Name { get; set; }
-        public string State { get; set; }
+        public Office Office { get; set; }
         public string Party { get; set; }
         public long TwitterId { get; set; }
         public string TwitterScreenName { get; set; }
 
         public PublicOfficial () { }
 
-        public PublicOfficial(Name name, string state, string party, long twitterId, string twitterScreenName)
-            : this ("", name, state, party, twitterId, twitterScreenName) { }
+        public PublicOfficial(Name name, Office office, string party, long twitterId, string twitterScreenName)
+            : this ("", name, office, party, twitterId, twitterScreenName) { }
 
-        public PublicOfficial(string tweepicsId, Name name, string state, string party, 
-                              long twitterId, string twitterScreenName)
+        public PublicOfficial(string tweepicsId, Name name, Office office, string party, long twitterId, 
+                              string twitterScreenName)
         {
             TweepicsId = tweepicsId;
             Name = name;
-            State = state;
+            Office = office;
             Party = party;
             TwitterId = twitterId;
             TwitterScreenName = twitterScreenName;

@@ -34,14 +34,18 @@ namespace Tweepics.Core.Database
                     string middleName = dataReader[2].ToString();
                     string lastName = dataReader[3].ToString();
                     string suffix = dataReader[4].ToString();
-                    string state = dataReader[5].ToString();
-                    string party = dataReader[6].ToString();
-                    long twitterId = Convert.ToInt64(dataReader[7]);
-                    string twitterScreenName = dataReader[8].ToString();
+                    string officeGovernment = dataReader[5].ToString();
+                    string officeBranch = dataReader[6].ToString();
+                    string officeState = dataReader[7].ToString();
+                    string officeTitle = dataReader[8].ToString();
+                    string party = dataReader[9].ToString();
+                    long twitterId = Convert.ToInt64(dataReader[10]);
+                    string twitterScreenName = dataReader[11].ToString();
 
                     Name name = new Name(firstName, middleName, lastName, suffix);
+                    Office office = new Office(officeGovernment, officeBranch, officeState, officeTitle);
 
-                    officials.Add(new PublicOfficial(tweepicsId, name, state, party, twitterId, twitterScreenName));
+                    officials.Add(new PublicOfficial(tweepicsId, name, office, party, twitterId, twitterScreenName));
                 }
                 dataReader.Close();
                 connection.Close();
@@ -70,20 +74,24 @@ namespace Tweepics.Core.Database
                     string middleName = oneLineOfData[1];
                     string lastName = oneLineOfData[2];
                     string suffix = oneLineOfData[3];
-                    string state = oneLineOfData[4];
-                    string party = oneLineOfData[5];
+                    string officeGovernment = oneLineOfData[4];
+                    string officeBranch = oneLineOfData[5];
+                    string officeState = oneLineOfData[6];
+                    string officeTitle = oneLineOfData[7];
+                    string party = oneLineOfData[8];
                     long twitterId = 0;
 
-                    if (oneLineOfData[6] != string.Empty)
+                    if (oneLineOfData[9] != string.Empty)
                     {
-                        twitterId = Convert.ToInt64(oneLineOfData[6]);
+                        twitterId = Convert.ToInt64(oneLineOfData[9]);
                     }
 
-                    string twitterScreenName = oneLineOfData[7];
+                    string twitterScreenName = oneLineOfData[10];
 
                     Name name = new Name(firstName, middleName, lastName, suffix);
+                    Office office = new Office(officeGovernment, officeBranch, officeState, officeTitle);
 
-                    officials.Add(new PublicOfficial(name, state, party, twitterId, twitterScreenName));
+                    officials.Add(new PublicOfficial(name, office, party, twitterId, twitterScreenName));
                 }
                 else
                     break;
