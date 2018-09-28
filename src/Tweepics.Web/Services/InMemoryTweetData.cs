@@ -8,7 +8,7 @@ namespace Tweepics.Web.Services
 {
     public class InMemoryTweetData : ITweetData
     {
-        private IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
 
         public InMemoryTweetData(IConfiguration configuration)
         {
@@ -20,8 +20,7 @@ namespace Tweepics.Web.Services
             string connectionString = _configuration["ConnectionString"];
 
             TweetReader dbTweets = new TweetReader(connectionString);
-            List<Tweet> tweets = new List<Tweet>();
-            tweets = dbTweets.ReadAll();
+            List<Tweet> tweets = dbTweets.ReadAll();
 
             return tweets;
         }
@@ -31,8 +30,25 @@ namespace Tweepics.Web.Services
             string connectionString = _configuration["ConnectionString"];
 
             TweetReader tweetFinder = new TweetReader(connectionString);
-            List<Tweet> tweets = new List<Tweet>();
-            tweets = tweetFinder.FindTweetsByTag(tag);
+            List<Tweet> tweets = tweetFinder.FindTweetsByTag(tag);
+
+            if (tweets == null)
+            {
+                return null;
+            }
+            else
+            {
+                tweets = tweets.OrderByDescending(tweet => tweet.CreatedAt).ToList();
+                return tweets;
+            }
+        }
+
+        public List<Tweet> FindBySearch(string query)
+        {
+            string connectionString = _configuration["ConnectionString"];
+
+            TweetReader tweetFinder = new TweetReader(connectionString);
+            List<Tweet> tweets = tweetFinder.SearchNameTweetText(query);
 
             if (tweets == null)
             {

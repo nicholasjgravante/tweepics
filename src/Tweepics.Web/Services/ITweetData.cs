@@ -7,5 +7,6 @@ namespace Tweepics.Web.Services
     {
         List<Tweet> GetAll();
         List<Tweet> FindByTag(string topic);
+        List<Tweet> FindBySearch(string query);
     }
 }
