@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Tweepics.Web.Services;
+using Tweepics.Web.Models;
+using Tweepics.Web.ViewModels.Home;
 
 namespace Tweepics.Web.Controllers
 {
@@ -12,9 +14,11 @@ namespace Tweepics.Web.Controllers
             _tags = tags;
         }
 
-        public IActionResult AllTags()
+        public IActionResult Index()
         {
-            var model = _tags.GetAllTags();
+            HomeIndexViewModel model = new HomeIndexViewModel();
+            model.Tags = _tags.GetAllTags();
+            model.TweetQueryInputModel = new TweetQueryInputModel();
 
             return View(model);
         }

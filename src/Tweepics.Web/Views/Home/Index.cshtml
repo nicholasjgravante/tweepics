@@ -1,0 +1,62 @@
+﻿@using Tweepics.Web.ViewModels.Home;
+@model HomeIndexViewModel
+
+@{
+    ViewBag.Title = "Tweepics";
+    ViewBag.CssClass = "container-fluid tags-background";
+    ViewBag.Navbar = "navbar-all-tags";
+}
+
+<h1 class="home-slogan">One Nation under Twitter</h1>
+<div class="container-fluid">
+    @Html.Partial("_Search", Model.TweetQueryInputModel)
+</div>
+<div class="vertical-center">
+    <div class="container">
+        @for (int i = 0; i < Model.Tags.Count; i += 3)
+        {
+            <div class="row">
+                <div class="col-sm-4">
+                    <a class="btn btn-block tags-primary"
+                       asp-action="Tweets" asp-controller="Display"
+                       asp-route-originalquery="@Model.Tags[i]"
+                       asp-route-querytype="tag">
+                        @Model.Tags[i]
+                    </a>
+                </div>
+                <div class="col-sm-4">
+                    @if (i + 1 < Model.Tags.Count)
+                    {
+                        <a class="btn btn-block tags-primary"
+                           asp-action="Tweets" asp-controller="Display"
+                           asp-route-originalquery="@Model.Tags[i + 1]"
+                           asp-route-querytype="tag">
+                            @Model.Tags[i + 1]
+                        </a>
+                    }
+                    else
+                    {
+                        <div>
+                        </div>
+                    }
+                </div>
+                <div class="col-sm-4">
+                    @if (i + 2 < Model.Tags.Count)
+                    {
+                        <a class="btn btn-block tags-primary"
+                           asp-action="Tweets" asp-controller="Display"
+                           asp-route-originalquery="@Model.Tags[i + 2]"
+                           asp-route-querytype="tag">
+                            @Model.Tags[i + 2]
+                        </a>
+                    }
+                    else
+                    {
+                        <div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>

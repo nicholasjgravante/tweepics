@@ -1,0 +1,16 @@
+﻿@using Tweepics.Web.Models;
+@model TweetQueryInputModel
+
+<div class="row justify-content-center">
+    <div class="search-box">
+        <form asp-controller="Display" asp-action="Tweets" method="get">
+            <div class="input-group">
+                <input type="text" placeholder="Search tweets" class="form-control search-text-input" asp-for="OriginalQuery" />
+                <input type="hidden" asp-for="QueryType" value="search" />
+                <div class="input-group-append">
+                    <button type="submit" class="btn search-bar-button">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
