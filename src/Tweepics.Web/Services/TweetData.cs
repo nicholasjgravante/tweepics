@@ -6,23 +6,13 @@ using System.Linq;
 
 namespace Tweepics.Web.Services
 {
-    public class InMemoryTweetData : ITweetData
+    public class TweetData : ITweetData
     {
         private readonly IConfiguration _configuration;
 
-        public InMemoryTweetData(IConfiguration configuration)
+        public TweetData(IConfiguration configuration)
         {
             _configuration = configuration;
-        }
-
-        public List<Tweet> GetAll()
-        {
-            string connectionString = _configuration["ConnectionString"];
-
-            TweetReader dbTweets = new TweetReader(connectionString);
-            List<Tweet> tweets = dbTweets.ReadAll();
-
-            return tweets;
         }
 
         public List<Tweet> FindByTag(string tag)
@@ -38,17 +28,16 @@ namespace Tweepics.Web.Services
             }
             else
             {
-                tweets = tweets.OrderByDescending(tweet => tweet.CreatedAt).ToList();
                 return tweets;
             }
         }
 
-        public List<Tweet> FindBySearch(string query)
+        public List<Tweet> FindBySearch(string searchQuery)
         {
             string connectionString = _configuration["ConnectionString"];
 
             TweetReader tweetFinder = new TweetReader(connectionString);
-            List<Tweet> tweets = tweetFinder.SearchNameTweetText(query);
+            List<Tweet> tweets = tweetFinder.SearchUsersAndTweetContent(searchQuery);
 
             if (tweets == null)
             {
@@ -56,7 +45,6 @@ namespace Tweepics.Web.Services
             }
             else
             {
-                tweets = tweets.OrderByDescending(tweet => tweet.CreatedAt).ToList();
                 return tweets;
             }
         }

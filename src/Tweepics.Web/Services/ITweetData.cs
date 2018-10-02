@@ -5,8 +5,7 @@ namespace Tweepics.Web.Services
 {
     public interface ITweetData
     {
-        List<Tweet> GetAll();
-        List<Tweet> FindByTag(string topic);
-        List<Tweet> FindBySearch(string query);
+        List<Tweet> FindByTag(string tag);
+        List<Tweet> FindBySearch(string searchQuery);
     }
 }
