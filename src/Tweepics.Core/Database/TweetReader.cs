@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 using Tweepics.Core.Models;
-using Tweepics.Core.Config;
 
 namespace Tweepics.Core.Database
 {
@@ -196,6 +195,47 @@ namespace Tweepics.Core.Database
                     CommandText = @"SELECT * FROM tweet_data WHERE user_id = @user_id"
                 };
                 cmd.Parameters.AddWithValue("@user_id", userId);
+
+                MySqlDataReader dataReader = cmd.ExecuteReader();
+
+                if (!dataReader.HasRows)
+                    return null;
+
+                while (dataReader.Read())
+                {
+                    string fullName = dataReader[0].ToString();
+                    string screenName = dataReader[1].ToString();
+                    long userID = Convert.ToInt64(dataReader[2]);
+                    DateTime createdAt = Convert.ToDateTime(dataReader[3]);
+                    long tweetID = Convert.ToInt64(dataReader[4]);
+                    string text = dataReader[5].ToString();
+                    string url = dataReader[6].ToString();
+                    string html = dataReader[7].ToString();
+
+                    tweets.Add(new Tweet(fullName, screenName, userID, createdAt, tweetID,
+                                         text, url, html));
+                }
+                dataReader.Close();
+                connection.Close();
+                return tweets;
+            }
+        }
+
+        public List<Tweet> SearchUsersAndTweetContent(string searchQuery)
+        {
+            using (MySqlConnection connection = new MySqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                List<Tweet> tweets = new List<Tweet>();
+
+                MySqlCommand cmd = new MySqlCommand
+                {
+                    Connection = connection,
+                    CommandText = @"SELECT * FROM tweet_data WHERE MATCH (full_name, tweet_text) 
+                                    AGAINST (@searchQuery IN NATURAL LANGUAGE MODE)"
+                };
+                cmd.Parameters.AddWithValue("@searchQuery", searchQuery);
 
                 MySqlDataReader dataReader = cmd.ExecuteReader();
 
