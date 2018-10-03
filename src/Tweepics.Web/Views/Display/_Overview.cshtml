@@ -1,11 +1,9 @@
 ﻿@model Tweepics.Web.ViewModels.Display.DisplayTweetsViewModel
 
-<div class="topic-breakdown-card">
-    <div class="card">
+    <div class="card overview-card">
         <div class="card-body">
-            <h6 class="card-title card-title-custom">@Model.OriginalQuery</h6>
-            @*<h6 class="card-subtitle text-muted card-subtitle-custom">Last 30 Days</h6>
-                <p class="card-text card-text-custom">@Model.ResultData.ThirtyDayTweetCount tweets</p>*@
+            <h6 class="card-title overview-title">@Model.OriginalQuery</h6>
+            @*<h6 class="card-subtitle text-muted overview-subtitle">Last 30 Days</h6>
+        <p class="card-text overview-text">@Model.ResultData.ThirtyDayTweetCount tweets</p>*@
         </div>
     </div>
-</div>

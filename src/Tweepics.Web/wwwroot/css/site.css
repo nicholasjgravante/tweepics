@@ -1,3 +1,228 @@
 ﻿body {
+    background-color: #f0f0f0;
+}
 
+a:hover {
+    text-decoration: none;
+}
+
+a:not([href]):not([tabindex]):hover, a:not([href]):not([tabindex]):focus {
+    color: #999;
+}
+
+.name-default {
+    font-family: Raleway, Changa, Maven Pro, Montserrat, Arial;
+    font-size: medium;
+    background-color: transparent;
+    color: white;
+}
+
+    .name-default:hover {
+        color: white;
+    }
+
+.navbar-default {
+    background-color: steelblue;
+    background-color: #1a1b29;
+    margin-bottom: 10px;
+}
+
+.navbar-home-page {
+    background-color: transparent;
+}
+
+.home-page-background {
+    background-image: url("..//images/MountRushmoreByRondaDarby.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+.home-page-slogan {
+    font-family: Tangerine, Great Vibes, Allura, Arial;
+    color: white;
+    text-align: center;
+    font-weight: 400;
+    font-size: 4rem;
+}
+
+.vertical-center {
+    min-height: 60%;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+}
+
+.tag-buttons {
+    display: inline-block;
+    font-family: 'Helvetica Neue', Helvetica, Tahoma, Arial, sans-serif;
+    font-weight: 200;
+    align-content: center;
+    background-color: lightgray;
+    background-color: rgba(240, 240, 240, 0.8);
+    color: black;
+    border: none;
+    text-align: center;
+    white-space: normal;
+    hyphens: auto;
+    vertical-align: middle;
+    padding: 0.375rem 0.75rem 0.375rem 0.75rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0.25rem;
+    transition-property: color, background-color, border-color, box-shadow;
+    transition-duration: 0.15s, 0.15s, 0.15s, 0.15s;
+    transition-timing-function: ease-in-out, ease-in-out, ease-in-out, ease-in-out;
+    transition-delay: 0s, 0s, 0s, 0s;
+}
+
+    .tag-buttons:hover {
+        color: white;
+        background-color: lightgray;
+        background-color: rgba(119,136,153,0.6);
+    }
+
+    .tag-buttons:focus {
+        box-shadow: none;
+    }
+
+.search-box {
+    margin-bottom: 1.0rem;
+}
+
+.search-text-input {
+    font-family: 'Helvetica Neue', Helvetica, Tahoma, Arial, sans-serif;
+    border: none;
+    align-content: center;
+}
+
+.search-bar-button {
+    font-family: 'Helvetica Neue', Helvetica, Tahoma, Arial, sans-serif;
+    background-color: orangered;
+    color: white;
+    border: none;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+}
+
+.overview-card {
+    margin-top: 10px;
+}
+
+.overview-title {
+    margin-bottom: 0;
+    align-content: center;
+    padding-left: .75rem;
+    font-family: 'Helvetica Neue', Helvetica, Roboto, sans-serif;
+    font-weight: 600;
+}
+
+.overview-subtitle {
+    margin-top: 1.0rem;
+    margin-bottom: 0.5rem;
+}
+
+.overview-text {
+    margin-bottom: 0.25rem;
+}
+
+.filter-box {
+    padding-top: 10.0px;
+    align-content: center;
+    background-color: transparent;
+}
+
+.filter-header-card {
+    background-color: #f0f0f0;
+}
+
+.filter-header {
+    background-color: transparent;
+    font-weight: 400;
+    font-size: 0.9rem;
+    font-family: 'Helvetica Neue', Roboto, sans-serif;
+}
+
+    .filter-header:focus {
+        box-shadow: none;
+    }
+
+.filter-item-card {
+    background-color: #f0f0f0;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.filter-item-list {
+    overflow-y: auto;
+    max-height: 300px;
+}
+
+.filter-item {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding-left: 12px;
+}
+
+.page-list {
+    padding-top: 30px;
+}
+
+.page-item-custom.active .page-link-custom {
+    background-color: transparent;
+    border: none;
+    color: #666;
+    font-weight: bold;
+}
+
+.page-link-custom {
+    color: #555;
+    background-color: transparent;
+    border: none;
+}
+
+    .page-link-custom:hover {
+        color: #999;
+        background-color: transparent;
+    }
+
+    .page-link-custom:focus {
+        box-shadow: none;
+    }
+
+.not-found-button {
+    background-color: orangered;
+    color: white;
+    border: none;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+    margin-top: 0.5rem;
+}
+
+    .not-found-button:hover {
+        color: white;
+    }
+
+    .not-found-button:focus {
+        box-shadow: none;
+    }
+
+.not-found-text-button {
+    text-align: center;
+    margin-top: 2.0rem;
+}
+
+
+@media (max-width: 576px) {
+    .home-page-slogan {
+        font-size: 3rem;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .vertical-center {
+        margin-top: 2rem;
+    }
 }

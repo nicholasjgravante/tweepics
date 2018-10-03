@@ -1,24 +1,22 @@
 ﻿@model Tweepics.Web.ViewModels.Display.DisplayTweetsViewModel
 @using Tweepics.Web.Models;
 
-<div class="filter-box filter-box-custom">
+<div class="filter-box">
     @if (Model.ResultInfo.USSenators.Count > 0)
     {
         <div class="card">
-            <div class="card-header card-header-custom" id="headingOne">
-                <h5 class="mb-0">
-                    <button class="btn card-header-link" data-toggle="collapse" data-target="#collapseOne"
-                            aria-expanded="false" aria-controls="collapseOne">
-                        U.S. Senator
-                    </button>
-                </h5>
+            <div class="card-header filter-header-card" id="headingOne">
+                <button class="btn filter-header" data-toggle="collapse" data-target="#collapseOne"
+                        aria-expanded="false" aria-controls="collapseOne">
+                    U.S. Senator
+                </button>
             </div>
             <div id="collapseOne" class="collapse" aria-labelledby="headingOne">
-                <div class="card-body card-body-custom">
-                    <div class="list-group list-group-custom">
+                <div class="card-body filter-item-card">
+                    <div class="list-group filter-item-list">
                         @foreach (var official in Model.ResultInfo.Officials)
                         {
-                            <a class="list-group-item group-item-options" data-toggle="button"
+                            <a class="list-group-item filter-item" data-toggle="button"
                                onclick="location.href='@Url.Action("Tweets", new TweetQueryInputModel
                                                               {
                                                                   QueryType = Model.QueryType,
@@ -34,20 +32,18 @@
         </div>
     }
     <div class="card">
-        <div class="card-header card-header-custom" id="headingTwo">
-            <h5 class="mb-0">
-                <button class="btn card-header-link collapsed" data-toggle="collapse" data-target="#collapseTwo"
-                        aria-expanded="true" aria-controls="collapseTwo">
-                    State
-                </button>
-            </h5>
+        <div class="card-header filter-header-card" id="headingTwo">
+            <button class="btn filter-header collapsed" data-toggle="collapse" data-target="#collapseTwo"
+                    aria-expanded="true" aria-controls="collapseTwo">
+                State
+            </button>
         </div>
         <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo">
-            <div class="card-body card-body-custom">
-                <div class="list-group  list-group-custom">
+            <div class="card-body filter-item-card">
+                <div class="list-group filter-item-list">
                     @foreach (var state in Model.ResultInfo.States)
                     {
-                        <a class="list-group-item group-item-options" data-toggle="button"
+                        <a class="list-group-item filter-item" data-toggle="button"
                            onclick="location.href='@Url.Action("Tweets", new TweetQueryInputModel
                                                           {
                                                               QueryType = Model.QueryType,
@@ -62,20 +58,18 @@
         </div>
     </div>
     <div class="card">
-        <div class="card-header card-header-custom" id="headingThree">
-            <h5 class="mb-0">
-                <button class="btn card-header-link collapsed" data-toggle="collapse" data-target="#collapseThree"
-                        aria-expanded="true" aria-controls="collapseThree">
-                    Party
-                </button>
-            </h5>
+        <div class="card-header filter-header-card" id="headingThree">
+            <button class="btn filter-header collapsed" data-toggle="collapse" data-target="#collapseThree"
+                    aria-expanded="true" aria-controls="collapseThree">
+                Party
+            </button>
         </div>
         <div id="collapseThree" class="collapse" aria-labelledby="headingThree">
-            <div class="card-body card-body-custom">
-                <div class="list-group">
+            <div class="card-body filter-item-card">
+                <div class="list-group filter-item-list">
                     @foreach (var party in Model.ResultInfo.Parties)
                     {
-                        <a class="list-group-item group-item-options" data-toggle="button"
+                        <a class="list-group-item filter-item" data-toggle="button"
                            onclick="location.href='@Url.Action("Tweets", new TweetQueryInputModel
                                                           {
                                                               QueryType = Model.QueryType,

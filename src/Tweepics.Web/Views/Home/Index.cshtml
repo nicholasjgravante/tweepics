@@ -3,11 +3,11 @@
 
 @{
     ViewBag.Title = "Tweepics";
-    ViewBag.CssClass = "container-fluid tags-background";
-    ViewBag.Navbar = "navbar-all-tags";
+    ViewBag.Body = "container-fluid home-page-background";
+    ViewBag.Navbar = "navbar-home-page";
 }
 
-<h1 class="home-slogan">One Nation under Twitter</h1>
+<h1 class="home-page-slogan">One Nation under Twitter</h1>
 <div class="container-fluid">
     @Html.Partial("_Search", Model.TweetQueryInputModel)
 </div>
@@ -17,7 +17,7 @@
         {
             <div class="row">
                 <div class="col-sm-4">
-                    <a class="btn btn-block tags-primary"
+                    <a class="btn btn-block tag-buttons"
                        asp-action="Tweets" asp-controller="Display"
                        asp-route-originalquery="@Model.Tags[i]"
                        asp-route-querytype="tag">
@@ -27,7 +27,7 @@
                 <div class="col-sm-4">
                     @if (i + 1 < Model.Tags.Count)
                     {
-                        <a class="btn btn-block tags-primary"
+                        <a class="btn btn-block tag-buttons"
                            asp-action="Tweets" asp-controller="Display"
                            asp-route-originalquery="@Model.Tags[i + 1]"
                            asp-route-querytype="tag">
@@ -43,7 +43,7 @@
                 <div class="col-sm-4">
                     @if (i + 2 < Model.Tags.Count)
                     {
-                        <a class="btn btn-block tags-primary"
+                        <a class="btn btn-block tag-buttons"
                            asp-action="Tweets" asp-controller="Display"
                            asp-route-originalquery="@Model.Tags[i + 2]"
                            asp-route-querytype="tag">
