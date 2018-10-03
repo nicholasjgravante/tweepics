@@ -1,64 +1,49 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Tweepics.Core.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using Tweepics.Web.Models;
 using Tweepics.Web.Services;
 using Tweepics.Web.ViewModels.Display;
-using X.PagedList;
-using X.PagedList.Mvc.Core;
 
 namespace Tweepics.Web.Controllers
 {
-    //[Route("[controller]/[action]")]
     public class DisplayController : Controller
     {
-        private ITweetData _tweetData;
-        private IConfiguration _configuration;
-        private ITags _tagData;
+        private ITweetResults _tweetResults;
 
-        public DisplayController(ITweetData tweetData,
-                                 ITags tagData,
-                                 IConfiguration configuration)
+        public DisplayController(ITweetResults tweetResults)
         {
-            _tweetData = tweetData;
-            _configuration = configuration;
-            _tagData = tagData;
+            _tweetResults = tweetResults;
         }
 
-        public IActionResult Tweets()
+        public IActionResult Tweets(TweetQueryInputModel inputQuery)
         {
-            var model = _tweetData.GetAll();
-
-            return View(model);
-        }
-
-        public IActionResult Topic(string tag, int? page)
-        {
-            List<string> tags = _tagData.GetAllTags();
-
-            if (!tags.Contains(tag))
+            if (ModelState.IsValid)
             {
-                return Content("No such tag was found.");
-            }
+                TweetQueryModel query = new TweetQueryModel();
+                query.QueryType = inputQuery.QueryType;
+                query.OriginalQuery = inputQuery.OriginalQuery;
+                query.Page = inputQuery.Page;
+                query.FilterOptions = new FilterOptions
+                {
+                    Officials = inputQuery.Officials,
+                    States = inputQuery.States,
+                    Parties = inputQuery.Parties
+                };
 
-            List<Tweet> tweets = _tweetData.FindByTag(tag);
+                DisplayTweetsViewModel model = _tweetResults.GetTweetResults(query);
 
-            if (tweets == null)
-            {
-                return Content("No tweets were found.");
-            }
-            else
-            {
-                var pageNumber = page ?? 1;
-                var onePageOfTweets = tweets.ToPagedList(pageNumber, 25);
-
-                var model = new DisplayTweetsViewModel();
-                model.Tweets = onePageOfTweets;
-                model.Topic = tag;
-                model.ThirtyDayCount = TweetMetrics.TweetsInLastThirtyDays(tweets);
+                if (model == null)
+                {
+                    return View("TweetsNotFound");
+                }
 
                 return View(model);
             }
+            else
+            {
+                // To do: Display validation errors
+                return View("TweetsNotFound");
+            }
+
         }
     }
 }
