@@ -1,14 +1,72 @@
-﻿@model IEnumerable<Tweepics.Core.Models.Tweet>
+﻿@model Tweepics.Web.ViewModels.Display.DisplayTweetsViewModel
+@using Tweepics.Web.Models;
+@using X.PagedList.Mvc.Core;
+@using X.PagedList;
 
-<table>
-    @foreach (var tweet in Model)
-    {
-        <tr>
-            <td>@tweet.FullName</td>
-            <td>@tweet.CreatedAt</td>
-            <td>@tweet.TweetID</td>
-            <td>@tweet.Text</td>
-        </tr>
-    }
+@{
+    ViewBag.Title = Model.OriginalQuery;
+}
 
-</table>
+<div class="container-fluid topics-container">
+    <div class="row">
+        <div class="col-sm-3">
+            @Html.Partial("_Overview", Model)
+            @Html.Partial("_Filters", Model)
+        </div>
+        <div class="col-sm-9">
+            <div class="row">
+                <div class="col-sm-4">
+                    @Html.Raw(Model.Tweets[0].Html)
+
+                    @for (int i = 3; i < 24; i += 3)
+                    {
+                        if (i < Model.Tweets.Count)
+                        {
+                            @Html.Raw(Model.Tweets[i].Html)
+                        }
+                    }
+                </div>
+                @if (2 < Model.Tweets.Count)
+                {
+                    <div class="col-sm-4">
+                        @Html.Raw(Model.Tweets[1].Html)
+
+                        @for (int i = 4; i < 24; i += 3)
+                        {
+                            if (i < Model.Tweets.Count)
+                            {
+                                @Html.Raw(Model.Tweets[i].Html)
+                            }
+                        }
+                    </div>
+                }
+                @if (3 < Model.Tweets.Count)
+                {
+                    <div class="col-sm-4">
+                        @Html.Raw(Model.Tweets[2].Html)
+
+                        @for (int i = 5; i < 24; i += 3)
+                        {
+                            if (i < Model.Tweets.Count)
+                            {
+                                @Html.Raw(Model.Tweets[i].Html)
+                            }
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section footer {
+    @Html.PagedListPager( (IPagedList)Model.Tweets, page=>Url.Action("Tweets", new  TweetQueryInputModel {
+    QueryType =Model.QueryType, OriginalQuery=Model.OriginalQuery, Page=page, Officials = Model.FiltersSelected.Officials,
+    States = Model.FiltersSelected.States, Parties = Model.FiltersSelected.Parties}),
+    new PagedListRenderOptions { ContainerDivClasses = new List<string> {"page-list"},
+        UlElementClasses = new List<string> { "pagination justify-content-center" },
+        LiElementClasses = new List<string> { "page-item page-item-custom" },
+        PageClasses = new List<string> { "page-link page-link-custom" } })
+}
+
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>

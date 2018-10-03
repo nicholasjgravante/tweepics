@@ -1,20 +1,30 @@
 ﻿<!DOCTYPE html>
 
-<html>
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>@ViewBag.Title</title>
     <link href="~/node_modules/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+
+    <link href="https://fonts.googleapis.com/css?family=Changa:800|Maven+Pro:900|Montserrat:700|Raleway:800" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Allura|Great+Vibes|Tangerine" rel="stylesheet">
     <link href="~/css/site.css" rel="stylesheet" />
 </head>
-<body>
-    <div class="@ViewBag.CssClass">
-        <nav class="navbar tweepics-brand">
-            <a class="navbar-brand" href="#">tweepics</a>
+<body class="@ViewBag.CssClass">
+    <div>
+        <nav class="navbar navbar-default @ViewBag.Navbar">
+            <a class="navbar-brand name-default @ViewBag.Name"
+               asp-action="Index" asp-controller="Home">TWEEPICS</a>
         </nav>
         <div>
             @RenderBody()
+            <footer class="footer">
+                @RenderSection("footer", required: false);
+            </footer>
         </div>
     </div>
+    <script src="~/node_modules/jquery/dist/jquery.slim.js"></script>
+    <script src="~/node_modules/popper.js/dist/popper.min.js"></script>
+    <script src="~/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
