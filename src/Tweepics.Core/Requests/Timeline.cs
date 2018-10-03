@@ -8,7 +8,6 @@ using Tweepics.Core.Config;
 using Tweepics.Core.Models;
 using Tweepics.Core.Database;
 using System.Threading;
-using Tweetinvi.Models.DTO;
 
 namespace Tweepics.Core.Requests
 {
@@ -34,7 +33,7 @@ namespace Tweepics.Core.Requests
         public List<Tweet> GetTimeline(long userID)
         {
             TweetReader tweetReader = new TweetReader(Keys.mySqlConnectionString);
-            long? latestTweetID = tweetReader.FindMostRecentTweetID(userID);
+            long? latestTweetID = tweetReader.FindMostRecentTweetId(userID);
 
             List<Tweet> untaggedTweets = new List<Tweet>();
 
@@ -50,20 +49,21 @@ namespace Tweepics.Core.Requests
                 ResetDateTime = newRateLimit.ResetDateTime;
             }
 
+            Console.WriteLine($"Requests remaining: {RequestsRemaining}");
+
             if (latestTweetID == null)
             {
-                Console.WriteLine($"Requests remaining: {RequestsRemaining}");
-                untaggedTweets = Historical(userID);
+                untaggedTweets = GetTweetsForNewUser(userID, 150);
             }
             else
             {
-                Console.WriteLine($"Requests remaining: {RequestsRemaining}");
-                untaggedTweets = Current(userID, latestTweetID.Value);
+                untaggedTweets = GetTweetsForExistingUser(userID, latestTweetID.Value);
             }
+
             return untaggedTweets;
         }
 
-        public List<Tweet> Current(long userID, long latestTweetID)
+        public List<Tweet> GetTweetsForExistingUser(long userID, long latestTweetID)
         {
             UserTimelineParameters timelineParameters = new UserTimelineParameters
             {
@@ -72,11 +72,10 @@ namespace Tweepics.Core.Requests
                 SinceId = latestTweetID
             };
 
-            Task<IEnumerable<ITweet>> userTimlineAsync =
-                Tweetinvi.Sync.ExecuteTaskAsync(() =>
-                {
-                    return Tweetinvi.Timeline.GetUserTimeline(userID, timelineParameters);
-                });
+            Task<IEnumerable<ITweet>> userTimlineAsync = Tweetinvi.Sync.ExecuteTaskAsync(() =>
+            {
+                return Tweetinvi.Timeline.GetUserTimeline(userID, timelineParameters);
+            });
 
             RequestsRemaining--;
 
@@ -90,8 +89,7 @@ namespace Tweepics.Core.Requests
             }
             else if (twitterResponse == null || !twitterResponse.Any())
             {
-                Console.WriteLine
-                    ($"No new tweets were returned for user id {userID} since {latestTweetID}.");
+                Console.WriteLine($"No new tweets were returned for {userID} since {latestTweetID}.");
                 return null; ;
             }
             else
@@ -100,17 +98,15 @@ namespace Tweepics.Core.Requests
 
                 foreach (var tweet in twitterResponse)
                 {
-                    var oembedTweet = Tweetinvi.TwitterAccessor.ExecuteGETQuery<IOEmbedTweetDTO>
-                        ($"https://publish.twitter.com/oembed?url={tweet.Url}");
+                    var oembedHtml = OEmbedTweet.GetHtml(tweet.Url);
 
                     RequestsRemaining--;
 
                     tweets.Add(new Tweet(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
                                          tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
-                                         tweet.FullText, tweet.Url, oembedTweet.HTML));
+                                         tweet.FullText, tweet.Url, oembedHtml));
                 }
 
-                DataToFile.Write(userID, tweets, twitterResponse, "Current");
                 return tweets;
             }
         }
@@ -118,7 +114,7 @@ namespace Tweepics.Core.Requests
         // Iterate through a user's timeline to capture their latest {###} tweets
         // as a means of gathering a large set of initial data.
 
-        public List<Tweet> Historical(long userID)
+        public List<Tweet> GetTweetsForNewUser(long userID, int tweetsToRetrieve)
         {
             UserTimelineParameters timelineParameters = new UserTimelineParameters
             {
@@ -126,11 +122,10 @@ namespace Tweepics.Core.Requests
                 IncludeRTS = false
             };
 
-            Task<IEnumerable<ITweet>> userTimlineAsync =
-                Tweetinvi.Sync.ExecuteTaskAsync(() =>
-                {
-                    return Tweetinvi.Timeline.GetUserTimeline(userID, timelineParameters);
-                });
+            Task<IEnumerable<ITweet>> userTimlineAsync = Tweetinvi.Sync.ExecuteTaskAsync(() =>
+            {
+                return Tweetinvi.Timeline.GetUserTimeline(userID, timelineParameters);
+            });
 
             RequestsRemaining--;
 
@@ -144,7 +139,7 @@ namespace Tweepics.Core.Requests
             }
             else if (lastResponse == null || !lastResponse.Any())
             {
-                Console.WriteLine($"No tweets were returned for user id {userID}.");
+                Console.WriteLine($"No tweets were returned for {userID}.");
                 return null;
             }
             else
@@ -153,18 +148,26 @@ namespace Tweepics.Core.Requests
 
                 foreach (var tweet in lastResponse)
                 {
-                    var oembedTweet = Tweetinvi.TwitterAccessor.ExecuteGETQuery<IOEmbedTweetDTO>
-                        ($"https://publish.twitter.com/oembed?url={tweet.Url}");
+                    var oembedHtml = OEmbedTweet.GetHtml(tweet.Url);
 
                     RequestsRemaining--;
 
                     allTweets.Add(new Tweet(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
-                                         tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
-                                         tweet.FullText, tweet.Url, oembedTweet.HTML));
+                                            tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
+                                            tweet.FullText, tweet.Url, oembedHtml));
                 }
 
-                while (lastResponse.ToArray().Length > 0 && allTweets.Count <= 200 && RequestsRemaining >= 10)
+                while (lastResponse.ToArray().Length > 0 && allTweets.Count <= tweetsToRetrieve)
                 {
+                    if (RequestsRemaining < 10)
+                    {
+                        Thread.Sleep(90 * 1000 * 10); // Wait 900,000 milliseconds, i.e. 15 minutes
+
+                        var newRateLimit = Tweetinvi.RateLimit.GetQueryRateLimit("https://api.twitter.com/1.1/statuses/user_timeline.json");
+                        RequestsRemaining = newRateLimit.Remaining;
+                        ResetDateTime = newRateLimit.ResetDateTime;
+                    }
+
                     // Max ID set to lowest tweet ID in our collection (i.e. the oldest tweet) minus 1.
                     // This number serves as a point of reference for requesting tweets older than those
                     // Twitter previously returned.
@@ -189,23 +192,109 @@ namespace Tweepics.Core.Requests
 
                     foreach (var tweet in lastResponse)
                     {
-                        var oembedTweet = Tweetinvi.TwitterAccessor.ExecuteGETQuery<IOEmbedTweetDTO>
-                            ($"https://publish.twitter.com/oembed?url={tweet.Url}");
+                        var oembedHtml = OEmbedTweet.GetHtml(tweet.Url);
+
+                        RequestsRemaining--;
+
+                        allTweets.Add(new Tweet(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
+                                                tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
+                                                tweet.FullText, tweet.Url, oembedHtml));
+                    }
+                }
+
+                return allTweets;
+            }
+        }
+
+        public List<Tweet> GetMoreTweets(long userId, long maxTweetId, int tweetsToRetrieve)
+        {
+            UserTimelineParameters timelineParameters = new UserTimelineParameters
+            {
+                MaximumNumberOfTweetsToRetrieve = 200,
+                IncludeRTS = false,
+                MaxId = maxTweetId
+            };
+
+            Task<IEnumerable<ITweet>> userTimlineAsync = Tweetinvi.Sync.ExecuteTaskAsync(() =>
+            {
+                return Tweetinvi.Timeline.GetUserTimeline(userId, timelineParameters);
+            });
+
+            RequestsRemaining--;
+
+            var lastTweets = userTimlineAsync.Result;
+            var latestException = Tweetinvi.ExceptionHandler.GetLastException();
+
+            if (latestException != null)
+            {
+                throw new InvalidOperationException
+                    ($"{latestException.StatusCode} : {latestException.TwitterDescription}");
+            }
+            else if (lastTweets == null || !lastTweets.Any())
+            {
+                Console.WriteLine($"No tweets were returned for {userId}.");
+                return null;
+            }
+            else
+            {
+                List<Tweet> allTweets = new List<Tweet>();
+
+                foreach (var tweet in lastTweets)
+                {
+                    var oembedHtml = OEmbedTweet.GetHtml(tweet.Url);
+
+                    RequestsRemaining--;
+
+                    allTweets.Add(new Tweet(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
+                                            tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
+                                            tweet.FullText, tweet.Url, oembedHtml));
+                }
+
+                while (lastTweets.ToArray().Length > 0 && allTweets.Count <= tweetsToRetrieve)
+                {
+                    if (RequestsRemaining < 10)
+                    {
+                        Thread.Sleep(90 * 1000 * 10); // Wait 900,000 milliseconds, i.e. 15 minutes
+
+                        var newRateLimit = Tweetinvi.RateLimit.GetQueryRateLimit("https://api.twitter.com/1.1/statuses/user_timeline.json");
+                        RequestsRemaining = newRateLimit.Remaining;
+                        ResetDateTime = newRateLimit.ResetDateTime;
+                    }
+
+                    // Max ID set to lowest tweet ID in our collection (i.e. the oldest tweet) minus 1.
+                    // This number serves as a point of reference for requesting tweets older than those
+                    // Twitter previously returned.
+
+                    long maxTweetID = allTweets.Min(x => x.TweetID) - 1;
+
+                    timelineParameters = new UserTimelineParameters
+                    {
+                        MaximumNumberOfTweetsToRetrieve = 200,
+                        IncludeRTS = false,
+                        MaxId = maxTweetID
+                    };
+
+                    userTimlineAsync = Tweetinvi.Sync.ExecuteTaskAsync(() =>
+                    {
+                        return Tweetinvi.Timeline.GetUserTimeline(userId, timelineParameters);
+                    });
+
+                    RequestsRemaining--;
+
+                    lastTweets = userTimlineAsync.Result;
+
+                    foreach (var tweet in lastTweets)
+                    {
+                        var oembedHtml = OEmbedTweet.GetHtml(tweet.Url);
 
                         RequestsRemaining--;
 
                         allTweets.Add(new Tweet(tweet.CreatedBy.Name, tweet.CreatedBy.ScreenName,
                                              tweet.CreatedBy.Id, tweet.CreatedAt, tweet.Id,
-                                             tweet.FullText, tweet.Url, oembedTweet.HTML));
+                                             tweet.FullText, tweet.Url, oembedHtml));
                     }
                 }
 
-                if (RequestsRemaining < 10)
-                {
-                    Console.WriteLine("Less than 10 requests remaining; held off further iterations");
-                }
-
-                DataToFile.Write(userID, allTweets, lastResponse, "Historical");
                 return allTweets;
             }
         }
