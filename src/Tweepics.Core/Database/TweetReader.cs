@@ -18,7 +18,7 @@ namespace Tweepics.Core.Database
                 MySqlCommand cmd = new MySqlCommand
                 {
                     Connection = connection,
-                    CommandText = @"SELECT * FROM tweet_data"
+                    CommandText = @"SELECT * FROM tweets"
                 };
 
                 MySqlDataReader dataReader = cmd.ExecuteReader();
@@ -55,7 +55,7 @@ namespace Tweepics.Core.Database
                 MySqlCommand cmd = new MySqlCommand
                 {
                     Connection = connection,
-                    CommandText = @"SELECT MAX(tweet_id) FROM tweet_data WHERE user_id = @user_id"
+                    CommandText = @"SELECT MAX(tweet_id) FROM tweets WHERE user_id = @user_id"
                 };
                 cmd.Parameters.AddWithValue("@user_id", userID);
 
@@ -82,7 +82,7 @@ namespace Tweepics.Core.Database
                 MySqlCommand cmd = new MySqlCommand
                 {
                     Connection = connection,
-                    CommandText = @"SELECT MIN(tweet_id) FROM tweet_data WHERE user_id = @user_id"
+                    CommandText = @"SELECT MIN(tweet_id) FROM tweets WHERE user_id = @user_id"
                 };
                 cmd.Parameters.AddWithValue("@user_id", userID);
 
@@ -109,14 +109,14 @@ namespace Tweepics.Core.Database
 
                 List<Tweet> tweets = new List<Tweet>();
 
-                // (1) Find tag id from argument in tweet_tags, (2) find tweet ids from 
-                // tag id in tagmap, and (3) find tweets from tweet ids in tweet_data
+                // (1) Find tag id from argument in tags, (2) find tweet ids from 
+                // tag id in tagmap, and (3) find tweets from tweet ids in tweets
 
                 MySqlCommand cmd = new MySqlCommand
                 {
                     Connection = connection,
                     CommandText = @"SELECT td.* 
-                                    FROM tweet_data td, tweet_tags tt, tagmap tm
+                                    FROM tweets td, tags tt, tagmap tm
                                     WHERE td.tweet_id = tm.tweet_id
                                     AND tm.tag_id = tt.id
                                     AND tt.tag = @tag"
@@ -160,7 +160,7 @@ namespace Tweepics.Core.Database
                 MySqlCommand cmd = new MySqlCommand
                 {
                     Connection = connection,
-                    CommandText = @"SELECT user_id, COUNT(*) FROM tweet_data GROUP BY user_id"
+                    CommandText = @"SELECT user_id, COUNT(*) FROM tweets GROUP BY user_id"
                 };
 
                 MySqlDataReader dataReader = cmd.ExecuteReader();
@@ -192,7 +192,7 @@ namespace Tweepics.Core.Database
                 MySqlCommand cmd = new MySqlCommand
                 {
                     Connection = connection,
-                    CommandText = @"SELECT * FROM tweet_data WHERE user_id = @user_id"
+                    CommandText = @"SELECT * FROM tweets WHERE user_id = @user_id"
                 };
                 cmd.Parameters.AddWithValue("@user_id", userId);
 
@@ -232,7 +232,7 @@ namespace Tweepics.Core.Database
                 MySqlCommand cmd = new MySqlCommand
                 {
                     Connection = connection,
-                    CommandText = @"SELECT * FROM tweet_data WHERE MATCH (full_name, tweet_text) 
+                    CommandText = @"SELECT * FROM tweets WHERE MATCH (full_name, tweet_text) 
                                     AGAINST (@searchQuery IN NATURAL LANGUAGE MODE)"
                 };
                 cmd.Parameters.AddWithValue("@searchQuery", searchQuery);

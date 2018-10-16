@@ -22,20 +22,20 @@ namespace Tweepics.Core.Database
                     MySqlCommand cmd = new MySqlCommand
                     {
                         Connection = connection,
-                        CommandText = @"INSERT INTO tweet_data (full_name, screen_name, user_id, tweet_datetime, 
-                                    tweet_id, tweet_text, url, html, added_datetime)
-                                    VALUES (@full_name, @screen_name, @user_id, @tweet_datetime, 
-                                    @tweet_id, @tweet_text, @url, @html, @added_datetime)"
+                        CommandText = @"INSERT INTO tweets (full_name, screen_name, user_id, created,
+                                        tweet_id, tweet_text, url, html, added) 
+                                        VALUES (@full_name, @screen_name, @user_id, @created, @tweet_id, 
+                                        @tweet_text, @url, @html, @added)"
                     };
                     cmd.Parameters.Add("@full_name", MySqlDbType.VarChar).Value = tweet.FullName;
                     cmd.Parameters.Add("@screen_name", MySqlDbType.VarChar).Value = tweet.ScreenName;
-                    cmd.Parameters.Add("@user_id", MySqlDbType.Int64).Value = tweet.UserID;
-                    cmd.Parameters.Add("@tweet_datetime", MySqlDbType.DateTime).Value = tweet.CreatedAt;
-                    cmd.Parameters.Add("@tweet_id", MySqlDbType.Int64).Value = tweet.TweetID;
+                    cmd.Parameters.Add("@user_id", MySqlDbType.Int64).Value = tweet.UserId;
+                    cmd.Parameters.Add("@created", MySqlDbType.DateTime).Value = tweet.Created;
+                    cmd.Parameters.Add("@tweet_id", MySqlDbType.Int64).Value = tweet.TweetId;
                     cmd.Parameters.Add("@tweet_text", MySqlDbType.VarChar).Value = tweet.Text;
                     cmd.Parameters.Add("@url", MySqlDbType.VarChar).Value = tweet.Url;
                     cmd.Parameters.Add("@html", MySqlDbType.VarChar).Value = tweet.Html;
-                    cmd.Parameters.Add("@added_datetime", MySqlDbType.DateTime).Value = now;
+                    cmd.Parameters.Add("@added", MySqlDbType.DateTime).Value = now;
 
                     cmd.Prepare();
                     cmd.ExecuteNonQuery();
@@ -54,7 +54,7 @@ namespace Tweepics.Core.Database
 
                 foreach (var tweet in taggedTweets)
                 {
-                    foreach (string singleTagID in tweet.TagID)
+                    foreach (string singleTagID in tweet.TagId)
                     {
                         Guid guid = Guid.NewGuid();
                         string id = guid.ToString();
@@ -66,7 +66,7 @@ namespace Tweepics.Core.Database
                                             VALUES (@id, @tweet_id, @tag_id)"
                         };
                         cmd.Parameters.Add("@id", MySqlDbType.VarChar).Value = id;
-                        cmd.Parameters.Add("@tweet_id", MySqlDbType.Int64).Value = tweet.TweetID;
+                        cmd.Parameters.Add("@tweet_id", MySqlDbType.Int64).Value = tweet.TweetId;
                         cmd.Parameters.Add("@tag_id", MySqlDbType.VarChar).Value = singleTagID;
 
                         cmd.Prepare();

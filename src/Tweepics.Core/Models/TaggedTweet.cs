@@ -4,13 +4,13 @@ namespace Tweepics.Core.Models
 {
     public class TaggedTweet
     {
-        public long TweetID { get; set; }
-        public List<string> TagID { get; set; }
+        public long TweetId { get; set; }
+        public List<string> TagId { get; set; }
 
-        public TaggedTweet(long tweetID, List<string> tagID)
+        public TaggedTweet(long tweetId, List<string> tagId)
         {
-            TweetID = tweetID;
-            TagID = tagID;
+            TweetId = tweetId;
+            TagId = tagId;
         }
     }
 }

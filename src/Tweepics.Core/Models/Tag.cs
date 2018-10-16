@@ -5,20 +5,20 @@ namespace Tweepics.Core.Models
 {
     public class Tag
     {
-        public string ID { get; set; }
+        public string Id { get; set; }
         public string Name { get; set; }
         public string KeywordString { get; set; }
         public List<string> KeywordList { get; set; }
 
         public Tag() { }
 
-        public Tag(string tagName, string keywordsString)
-            : this ("", tagName, keywordsString) { }
+        public Tag(string name, string keywordsString)
+            : this ("", name, keywordsString) { }
 
-        public Tag(string tagID, string tagName, string keywordString)
+        public Tag(string id, string name, string keywordString)
         {
-            ID = tagID;
-            Name = tagName;
+            Id = id;
+            Name = name;
             KeywordString = keywordString.ToLower();
             KeywordList = keywordString.ToLower().Split(", ").ToList();
         }

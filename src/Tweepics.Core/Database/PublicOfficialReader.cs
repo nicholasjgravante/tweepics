@@ -22,7 +22,7 @@ namespace Tweepics.Core.Database
                 MySqlCommand cmd = new MySqlCommand
                 {
                     Connection = connection,
-                    CommandText = @"SELECT * from rep_info"
+                    CommandText = @"SELECT * from representatives"
                 };
 
                 MySqlDataReader dataReader = cmd.ExecuteReader();

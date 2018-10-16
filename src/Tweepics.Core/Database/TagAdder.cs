@@ -26,7 +26,7 @@ namespace Tweepics.Core.Database
                     MySqlCommand cmd = new MySqlCommand
                     {
                         Connection = connection,
-                        CommandText = @"INSERT INTO tweet_tags (id, tag, keywords) 
+                        CommandText = @"INSERT INTO tags (id, tag, keywords) 
                                         VALUES (@id, @tag, @keywords)
                                         ON DUPLICATE KEY UPDATE keywords=@keywords"
                     };

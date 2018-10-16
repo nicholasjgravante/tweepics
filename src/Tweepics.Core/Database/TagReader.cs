@@ -20,7 +20,7 @@ namespace Tweepics.Core.Database
                 MySqlCommand cmd = new MySqlCommand
                 {
                     Connection = connection,
-                    CommandText = @"SELECT * from tweet_tags"
+                    CommandText = @"SELECT * from tags"
                 };
 
                 MySqlDataReader dataReader = cmd.ExecuteReader();

@@ -23,7 +23,7 @@ namespace Tweepics.Core.Database
                     MySqlCommand cmd = new MySqlCommand
                     {
                         Connection = connection,
-                        CommandText = @"INSERT INTO rep_info (tweepics_id, first_name, middle_name, 
+                        CommandText = @"INSERT INTO representatives (tweepics_id, first_name, middle_name, 
                                         last_name, suffix, office_government, office_branch, office_state, 
                                         office_title, party, twitter_id, twitter_screen_name)
                                         VALUES (@tweepics_id, @first_name, @middle_name, @last_name, @suffix, 
