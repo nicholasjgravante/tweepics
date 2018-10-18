@@ -5,10 +5,7 @@ using Tweepics.Core.Models;
 using Tweepics.Core.Tagging;
 using Tweepics.Core.Requests;
 using Tweepics.Core.Database;
-using System.Net;
-using System.IO;
-using Tweetinvi.Logic.Model;
-using Tweetinvi.Models.DTO;
+using System.Linq;
 
 namespace Tweepics
 {
@@ -16,19 +13,17 @@ namespace Tweepics
     {
         static void Main(string[] args)
         {
-            List<long> userIDs = new List<long>
-            {
-            30354991, // Kamala Harris
-            29442313, // Bernie Sanders
-            15808765  // Cory Booker
-            };
+            PublicOfficialReader publicOfficialReader = new PublicOfficialReader(Keys.mySqlConnectionString);
+            List<PublicOfficial> publicOfficials = publicOfficialReader.ReadFromDb();
+
+            List<long> userId = publicOfficials.Where(official => official.TwitterId != 0).Select(official => official.TwitterId).ToList();
 
             Timeline timeline = new Timeline();
 
-            foreach (int ID in userIDs)
+            foreach (long id in userId)
             {
                 List<Tweet> untaggedTweets = new List<Tweet>();
-                untaggedTweets = timeline.GetTimeline(ID);
+                untaggedTweets = timeline.GetTimeline(id);
 
                 if (untaggedTweets == null)
                     continue;
@@ -36,7 +31,7 @@ namespace Tweepics
                 TweetAdder tweetAdder = new TweetAdder(Keys.mySqlConnectionString);
                 tweetAdder.AddUntaggedTweets(untaggedTweets);
 
-                Console.WriteLine($"{untaggedTweets.Count} tweets were added for user {ID}.");
+                Console.WriteLine($"{untaggedTweets.Count} tweets were added.");
 
                 TagReader tagReader = new TagReader(Keys.mySqlConnectionString);
                 List<Tag> tags = new List<Tag>();
@@ -48,7 +43,8 @@ namespace Tweepics
 
                 tweetAdder.AddTaggedTweets(taggedTweets);
 
-                Console.WriteLine($"{taggedTweets.Count} tweets were tagged and added for user {ID}.");
+                Console.WriteLine($"{taggedTweets.Count} tweets were tagged.");
+                Console.WriteLine("--------------------");
             }
 
             Console.WriteLine("The program ran to completion.");
