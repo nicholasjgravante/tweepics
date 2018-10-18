@@ -30,18 +30,17 @@ namespace Tweepics.Core.Requests
             ResetDateTime = rateLimit.ResetDateTime;
         }
 
-        public List<Tweet> GetTimeline(long userID)
+        public List<Tweet> GetTimeline(long userId)
         {
+            Console.WriteLine($"*** Starting on {userId} ***");
             TweetReader tweetReader = new TweetReader(Keys.mySqlConnectionString);
-            long? latestTweetID = tweetReader.FindMostRecentTweetId(userID);
+            long? latestTweetID = tweetReader.FindMostRecentTweetId(userId);
 
             List<Tweet> untaggedTweets = new List<Tweet>();
 
             while (RequestsRemaining < 10)
             {
-                Console.WriteLine("Less than 10 requests remaining in window.");
-                Console.WriteLine("We're going to wait 15 minutes before making any more requests...");
-
+                Console.WriteLine("Less than 10 requests remaining in window. 15 minute cooldown starts now.");
                 Thread.Sleep(90 * 1000 * 10); // Wait 900,000 milliseconds, i.e. 15 minutes
 
                 var newRateLimit = Tweetinvi.RateLimit.GetQueryRateLimit("https://api.twitter.com/1.1/statuses/user_timeline.json");
@@ -53,28 +52,28 @@ namespace Tweepics.Core.Requests
 
             if (latestTweetID == null)
             {
-                untaggedTweets = GetTweetsForNewUser(userID, 150);
+                untaggedTweets = GetTweetsForNewUser(userId, 100);
             }
             else
             {
-                untaggedTweets = GetTweetsForExistingUser(userID, latestTweetID.Value);
+                untaggedTweets = GetTweetsForExistingUser(userId, latestTweetID.Value);
             }
 
             return untaggedTweets;
         }
 
-        public List<Tweet> GetTweetsForExistingUser(long userID, long latestTweetID)
+        public List<Tweet> GetTweetsForExistingUser(long userId, long latestTweetId)
         {
             UserTimelineParameters timelineParameters = new UserTimelineParameters
             {
                 MaximumNumberOfTweetsToRetrieve = 200,
                 IncludeRTS = false,
-                SinceId = latestTweetID
+                SinceId = latestTweetId
             };
 
             Task<IEnumerable<ITweet>> userTimlineAsync = Tweetinvi.Sync.ExecuteTaskAsync(() =>
             {
-                return Tweetinvi.Timeline.GetUserTimeline(userID, timelineParameters);
+                return Tweetinvi.Timeline.GetUserTimeline(userId, timelineParameters);
             });
 
             RequestsRemaining--;
@@ -89,8 +88,8 @@ namespace Tweepics.Core.Requests
             }
             else if (twitterResponse == null || !twitterResponse.Any())
             {
-                Console.WriteLine($"No new tweets were returned for {userID} since {latestTweetID}.");
-                return null; ;
+                Console.WriteLine($"No new tweets were returned for {userId} since {latestTweetId}.");
+                return null;
             }
             else
             {
@@ -114,7 +113,7 @@ namespace Tweepics.Core.Requests
         // Iterate through a user's timeline to capture their latest {###} tweets
         // as a means of gathering a large set of initial data.
 
-        public List<Tweet> GetTweetsForNewUser(long userID, int tweetsToRetrieve)
+        public List<Tweet> GetTweetsForNewUser(long userId, int tweetsToRetrieve)
         {
             UserTimelineParameters timelineParameters = new UserTimelineParameters
             {
@@ -124,7 +123,7 @@ namespace Tweepics.Core.Requests
 
             Task<IEnumerable<ITweet>> userTimlineAsync = Tweetinvi.Sync.ExecuteTaskAsync(() =>
             {
-                return Tweetinvi.Timeline.GetUserTimeline(userID, timelineParameters);
+                return Tweetinvi.Timeline.GetUserTimeline(userId, timelineParameters);
             });
 
             RequestsRemaining--;
@@ -139,7 +138,7 @@ namespace Tweepics.Core.Requests
             }
             else if (lastResponse == null || !lastResponse.Any())
             {
-                Console.WriteLine($"No tweets were returned for {userID}.");
+                Console.WriteLine($"No tweets were returned for {userId}.");
                 return null;
             }
             else
@@ -157,10 +156,11 @@ namespace Tweepics.Core.Requests
                                             tweet.FullText, tweet.Url, oembedHtml));
                 }
 
-                while (lastResponse.ToArray().Length > 0 && allTweets.Count <= tweetsToRetrieve)
+                while (lastResponse.ToArray().Length > 0 && allTweets.Count < tweetsToRetrieve)
                 {
                     if (RequestsRemaining < 10)
                     {
+                        Console.WriteLine("Less than 10 requests remaining in window. 15 minute cooldown starts now.");
                         Thread.Sleep(90 * 1000 * 10); // Wait 900,000 milliseconds, i.e. 15 minutes
 
                         var newRateLimit = Tweetinvi.RateLimit.GetQueryRateLimit("https://api.twitter.com/1.1/statuses/user_timeline.json");
@@ -172,7 +172,7 @@ namespace Tweepics.Core.Requests
                     // This number serves as a point of reference for requesting tweets older than those
                     // Twitter previously returned.
 
-                    long maxTweetID = allTweets.Min(x => x.TweetID) - 1;
+                    long maxTweetID = allTweets.Min(x => x.TweetId) - 1;
 
                     timelineParameters = new UserTimelineParameters
                     {
@@ -183,7 +183,7 @@ namespace Tweepics.Core.Requests
 
                     userTimlineAsync = Tweetinvi.Sync.ExecuteTaskAsync(() =>
                     {
-                        return Tweetinvi.Timeline.GetUserTimeline(userID, timelineParameters);
+                        return Tweetinvi.Timeline.GetUserTimeline(userId, timelineParameters);
                     });
 
                     RequestsRemaining--;
@@ -250,10 +250,11 @@ namespace Tweepics.Core.Requests
                                             tweet.FullText, tweet.Url, oembedHtml));
                 }
 
-                while (lastTweets.ToArray().Length > 0 && allTweets.Count <= tweetsToRetrieve)
+                while (lastTweets.ToArray().Length > 0 && allTweets.Count < tweetsToRetrieve)
                 {
                     if (RequestsRemaining < 10)
                     {
+                        Console.WriteLine("Less than 10 requests remaining in window. 15 minute cooldown starts now.");
                         Thread.Sleep(90 * 1000 * 10); // Wait 900,000 milliseconds, i.e. 15 minutes
 
                         var newRateLimit = Tweetinvi.RateLimit.GetQueryRateLimit("https://api.twitter.com/1.1/statuses/user_timeline.json");
@@ -265,7 +266,7 @@ namespace Tweepics.Core.Requests
                     // This number serves as a point of reference for requesting tweets older than those
                     // Twitter previously returned.
 
-                    long maxTweetID = allTweets.Min(x => x.TweetID) - 1;
+                    long maxTweetID = allTweets.Min(x => x.TweetId) - 1;
 
                     timelineParameters = new UserTimelineParameters
                     {
