@@ -17,16 +17,24 @@ namespace Tweepics.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ITags, TagData>();
-            services.AddScoped<ITweetData, InMemoryTweetData>();
+            services.AddScoped<ITweetData, TweetData>();
+            services.AddScoped<IPublicOfficialData, PublicOfficialData>();
+            services.AddScoped<ITweetsByOfficialData, TweetsByOfficialData>();
+            services.AddScoped<ITweetResults, TweetResults>();
 
-            // Start - Added for apache-kestrel reverse proxy
             services.AddMvc();
+
+            //services.AddHttpsRedirection(options =>
+            //{
+
+            //})
+
             services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders =
                     ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
             });
-            // End
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,11 +54,11 @@ namespace Tweepics.Web
 
             app.UseNodeModules(env.ContentRootPath);
 
-            // Start - Added for apache - kestrel reverse proxy
             app.UseForwardedHeaders();
+
             app.UseAuthentication();
+
             app.UseMvc(ConfigureRoutes);
-            // End
 
             app.Run(async (context) =>
             {
@@ -61,10 +69,11 @@ namespace Tweepics.Web
 
         private void ConfigureRoutes(IRouteBuilder routeBuilder)
         {
-            // HomeController/AllTags/4
+            // HomeController/Index/4
 
-            routeBuilder.MapRoute("Default",
-                "{controller=Home}/{action=AllTags}/{id?}");
+            routeBuilder.MapRoute(
+                name: "Default",
+                template: "{controller=Home}/{action=Index}/{id?}");
         }
     }
 }
