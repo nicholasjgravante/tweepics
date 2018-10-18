@@ -12,24 +12,24 @@ namespace Tweepics.Core.Tagging
 
             foreach (var tweet in untaggedTweets)
             {
-                List<string> tagIDs = new List<string>();
+                List<string> tagIds = new List<string>();
 
                 foreach (var tag in tags)
                     foreach (string keyword in tag.KeywordList)
                         if (tweet.Text.ToLower().Contains(keyword))
                         {
-                            if (!tagIDs.Contains(tag.ID))
+                            if (!tagIds.Contains(tag.Id))
                             {
-                                tagIDs.Add(tag.ID);
+                                tagIds.Add(tag.Id);
                             }
                             else
                                 continue;
                         }
 
-                if (!tagIDs.Any())
+                if (!tagIds.Any())
                     continue;
 
-                taggedTweets.Add(new TaggedTweet(tweet.TweetID, tagIDs));
+                taggedTweets.Add(new TaggedTweet(tweet.TweetId, tagIds));
             }
             return taggedTweets;
         }
