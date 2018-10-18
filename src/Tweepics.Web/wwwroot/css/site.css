@@ -11,8 +11,9 @@ a:not([href]):not([tabindex]):hover, a:not([href]):not([tabindex]):focus {
 }
 
 .name-default {
-    font-family: Raleway, Changa, Maven Pro, Montserrat, Arial;
+    font-family: Raleway, Maven Pro, Montserrat, Arial;
     font-size: medium;
+    font-weight: 700;
     background-color: transparent;
     color: white;
 }
@@ -40,7 +41,7 @@ a:not([href]):not([tabindex]):hover, a:not([href]):not([tabindex]):focus {
 }
 
 .home-page-slogan {
-    font-family: Tangerine, Great Vibes, Allura, Arial;
+    font-family: Tangerine, Great Vibes, 'Helvetica Neue', Helvetica, Arial;
     color: white;
     text-align: center;
     font-weight: 400;
