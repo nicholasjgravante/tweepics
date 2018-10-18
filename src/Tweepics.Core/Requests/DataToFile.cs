@@ -9,7 +9,7 @@ namespace Tweepics.Core.Requests
 {
     public class DataToFile
     {
-        public static void Write(long userID, List<Tweet> tweets, IEnumerable<ITweet> rawTimelineData, 
+        public static void Write(long userId, List<Tweet> tweets, IEnumerable<ITweet> rawTimelineData, 
                                  string currentOrHistorical)
         {
             string exePath = Environment.CurrentDirectory;
@@ -17,20 +17,20 @@ namespace Tweepics.Core.Requests
             string now = DateTime.Now.ToString("yyyy.MM.dd.HH-mm");
 
             using (StreamWriter tweetDataFile = new StreamWriter 
-                ($@"{tweetDataFolderPath}\{currentOrHistorical}TweetData_{userID}_{now}.txt",
+                ($@"{tweetDataFolderPath}\{currentOrHistorical}TweetData_{userId}_{now}.txt",
                 false, Encoding.Unicode))
             {
                 foreach (var tweet in tweets)
                 {
-                    tweetDataFile.WriteLine($"{tweet.FullName} ||||| {tweet.ScreenName} ||||| {tweet.UserID} ||||| " +
-                        $"{tweet.CreatedAt} ||||| {tweet.TweetID} ||||| {tweet.Text} ||||| {tweet.Url} ||||| {tweet.Html} *****");
+                    tweetDataFile.WriteLine($"{tweet.FullName} ||||| {tweet.ScreenName} ||||| {tweet.UserId} ||||| " +
+                        $"{tweet.Created} ||||| {tweet.TweetId} ||||| {tweet.Text} ||||| {tweet.Url} ||||| {tweet.Html} *****");
                 }
             }
 
             var jsonTweets = Tweetinvi.JsonSerializer.ToJson(rawTimelineData);
 
             using (StreamWriter jsonFile = new StreamWriter
-                ($@"{tweetDataFolderPath}\{currentOrHistorical}JSON_{userID}_{now}.txt",
+                ($@"{tweetDataFolderPath}\{currentOrHistorical}JSON_{userId}_{now}.txt",
                 false, Encoding.Unicode))
             {
                 jsonFile.WriteLine(jsonTweets);
