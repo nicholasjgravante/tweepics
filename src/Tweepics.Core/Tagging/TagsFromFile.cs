@@ -7,9 +7,9 @@ namespace Tweepics.Core.Tagging
 {
     public class TagsFromFile
     {
-        public List<Tag> Read(string tagsFolderPath, string fileName)
+        public List<Tag> Read(string pathToFile)
         {
-            string fileText = File.ReadAllText($@"{tagsFolderPath}\{fileName}");
+            string fileText = File.ReadAllText($@"{pathToFile}");
 
             List<string> rawDataStrings = new List<string>();
             rawDataStrings = fileText.Split("\n").ToList();
