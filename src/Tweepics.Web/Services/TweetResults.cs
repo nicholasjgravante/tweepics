@@ -58,7 +58,7 @@ namespace Tweepics.Web.Services
                 var pageNumber = query.Page ?? 1;
 
                 var onePageOfTweets = originalResults.SelectMany(x => x.Tweets)
-                                                     .OrderByDescending(tweet => tweet.CreatedAt)
+                                                     .OrderByDescending(tweet => tweet.Created)
                                                      .ToList()
                                                      .ToPagedList(pageNumber, 25);
 
@@ -66,7 +66,7 @@ namespace Tweepics.Web.Services
                 List<TweetsByOfficial> results = filter.FilterResults(originalResults, query.FilterOptions);
 
                 onePageOfTweets = results.SelectMany(x => x.Tweets)
-                                         .OrderByDescending(tweet => tweet.CreatedAt)
+                                         .OrderByDescending(tweet => tweet.Created)
                                          .ToList()
                                          .ToPagedList(pageNumber, 25);
 

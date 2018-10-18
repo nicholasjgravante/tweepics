@@ -117,7 +117,7 @@ namespace Tweepics.Web.Services
 
             foreach (var tweet in allTweets)
             {
-                if (tweet.CreatedAt >= thirtyDaysAgo)
+                if (tweet.Created >= thirtyDaysAgo)
                 {
                     thirtyDayTweetCount++;
                 }

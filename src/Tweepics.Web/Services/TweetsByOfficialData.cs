@@ -26,7 +26,7 @@ namespace Tweepics.Web.Services
 
             foreach (var official in officials)
             {
-                List<Tweet> officialTweets = tweets.Where(tweet => tweet.UserID == official.TwitterId).ToList();
+                List<Tweet> officialTweets = tweets.Where(tweet => tweet.UserId == official.TwitterId).ToList();
 
                 if (officialTweets.Any())
                 {
