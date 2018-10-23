@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Rewrite;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,22 +12,32 @@ namespace Tweepics.Web
 {
     public class Startup
     {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+        public IConfiguration Configuration { get; }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
             services.AddSingleton<ITags, TagData>();
             services.AddScoped<ITweetData, TweetData>();
             services.AddScoped<IPublicOfficialData, PublicOfficialData>();
             services.AddScoped<ITweetsByOfficialData, TweetsByOfficialData>();
             services.AddScoped<ITweetResults, TweetResults>();
 
-            services.AddMvc();
-
-            //services.AddHttpsRedirection(options =>
-            //{
-
-            //})
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
@@ -39,25 +49,24 @@ namespace Tweepics.Web
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app,
-                              IHostingEnvironment env,
-                              IConfiguration configuration)
+                              IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+                app.UseHsts();
+            }
 
-            app.UseRewriter(new RewriteOptions()
-                                .AddRedirectToHttpsPermanent());
-
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            app.UseCookiePolicy();
             app.UseNodeModules(env.ContentRootPath);
-
             app.UseForwardedHeaders();
-
             app.UseAuthentication();
-
             app.UseMvc(ConfigureRoutes);
 
             app.Run(async (context) =>
