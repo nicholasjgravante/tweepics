@@ -18,6 +18,9 @@ launchSettings.json
 appsettings.json
 appsettings.*.json
 
+#Tags-keywords
+Topics.txt
+
 # Tweet data files
 tweet_data/*.txt
 
