@@ -60,7 +60,7 @@ namespace Tweepics.Web.Services
                 var onePageOfTweets = originalResults.SelectMany(x => x.Tweets)
                                                      .OrderByDescending(tweet => tweet.Created)
                                                      .ToList()
-                                                     .ToPagedList(pageNumber, 25);
+                                                     .ToPagedList(pageNumber, 24);
 
                 TweetFilter filter = new TweetFilter();
                 List<TweetsByOfficial> results = filter.FilterResults(originalResults, query.FilterOptions);
@@ -68,7 +68,7 @@ namespace Tweepics.Web.Services
                 onePageOfTweets = results.SelectMany(x => x.Tweets)
                                          .OrderByDescending(tweet => tweet.Created)
                                          .ToList()
-                                         .ToPagedList(pageNumber, 25);
+                                         .ToPagedList(pageNumber, 24);
 
                 var model = new DisplayTweetsViewModel();
                 model.QueryType = query.QueryType;
