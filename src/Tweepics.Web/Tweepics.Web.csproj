@@ -5,12 +5,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.App"/>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="X.PagedList.Mvc.Core" Version="7.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Tweepics.Core\Tweepics.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Views\Shared\_GoogleAnalyticsSample.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
   </ItemGroup>
 
 </Project>

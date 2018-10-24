@@ -17,6 +17,7 @@ Keys.cs
 launchSettings.json
 appsettings.json
 appsettings.*.json
+_GoogleAnalytics.cshtml
 
 #Tags-keywords
 Topics.txt
