@@ -5,7 +5,7 @@
     @if (Model.ResultInfo.USSenators.Count > 0)
     {
         <div class="card">
-            <div class="card-header filter-header-card" id="headingOne">
+            <div class="card-header filter-header-card" id="headingOne" data-toggle="collapse" data-target="#collapseOne">
                 <button class="btn filter-header" data-toggle="collapse" data-target="#collapseOne"
                         aria-expanded="false" aria-controls="collapseOne">
                     U.S. Senator
@@ -32,7 +32,7 @@
         </div>
     }
     <div class="card">
-        <div class="card-header filter-header-card" id="headingTwo">
+        <div class="card-header filter-header-card" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo">
             <button class="btn filter-header collapsed" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
                 State
@@ -48,9 +48,9 @@
                                                           {
                                                               QueryType = Model.QueryType,
                                                               OriginalQuery = Model.OriginalQuery,
-                                                              States = new List<string> { state }
+                                                              States = new List<string> { state.Abbreviation }
                                                           })'">
-                            @state
+                            @state.FullName
                         </a>
                     }
                 </div>
@@ -58,7 +58,7 @@
         </div>
     </div>
     <div class="card">
-        <div class="card-header filter-header-card" id="headingThree">
+        <div class="card-header filter-header-card" id="headingThree" data-toggle="collapse" data-target="#collapseThree">
             <button class="btn filter-header collapsed" data-toggle="collapse" data-target="#collapseThree"
                     aria-expanded="true" aria-controls="collapseThree">
                 Party

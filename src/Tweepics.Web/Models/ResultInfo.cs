@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Tweepics.Core.Models;
+using Tweepics.Web.Models;
 
 namespace Tweepics.Web.Services
 {
@@ -9,7 +10,7 @@ namespace Tweepics.Web.Services
     {
         public List<PublicOfficial> Officials { get; set; }
         public List<PublicOfficial> USSenators { get; set; }
-        public List<string> States { get; set; }
+        public List<State> States { get; set; }
         public List<string> Parties { get; set; }
         public Dictionary<string, decimal> TweetPercentageByParty { get; set; }
         public int ThirtyDayTweetCount { get; set; }
@@ -37,20 +38,19 @@ namespace Tweepics.Web.Services
         {
             List<PublicOfficial> senators = new List<PublicOfficial>();
             senators = allOfficials.Where(official => official.Office.Government == "Federal" && official.Office.Title == "Senator")
-                                   .OrderBy(official => official.Office.State)
-                                   .ToList();
+                                   .OrderBy(official => official.Office.State).ToList();
 
             return senators;
         }
 
-        public List<string> GetUniqueStates(List<PublicOfficial> allOfficials)
+        public List<State> GetUniqueStates(List<PublicOfficial> allOfficials)
         {
-            List<string> uniqueStates = new List<string>();
-            uniqueStates = allOfficials.Select(official => official.Office.State).ToHashSet().ToList();
+            List<string> uniqueStates = allOfficials.Select(official => official.Office.State).ToHashSet().ToList();
 
-            uniqueStates.Sort();
+            List<State> statesFinal = uniqueStates.Select(stateAbbreviation => new State(stateAbbreviation))
+                                                  .ToHashSet().OrderBy(state => state.FullName).ToList();
 
-            return uniqueStates;
+            return statesFinal;
         }
 
         public List<string> GetUniqueParties(List<PublicOfficial> allOfficials)
