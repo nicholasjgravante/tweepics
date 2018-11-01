@@ -11,6 +11,11 @@ namespace Tweepics.Core.Database
     {
         private readonly string _connectionString;
 
+        public PublicOfficialReader(string mySqlConnectionString)
+        {
+            _connectionString = mySqlConnectionString;
+        }
+
         public List<PublicOfficial> ReadFromDb()
         {
             using (MySqlConnection connection = new MySqlConnection(_connectionString))
@@ -30,22 +35,23 @@ namespace Tweepics.Core.Database
                 while (dataReader.Read())
                 {
                     string tweepicsId = dataReader[0].ToString();
-                    string firstName = dataReader[1].ToString();
-                    string middleName = dataReader[2].ToString();
-                    string lastName = dataReader[3].ToString();
-                    string suffix = dataReader[4].ToString();
-                    string officeGovernment = dataReader[5].ToString();
-                    string officeBranch = dataReader[6].ToString();
-                    string officeState = dataReader[7].ToString();
-                    string officeTitle = dataReader[8].ToString();
-                    string party = dataReader[9].ToString();
-                    long twitterId = Convert.ToInt64(dataReader[10]);
-                    string twitterScreenName = dataReader[11].ToString();
+                    string incumbent = dataReader[1].ToString();
+                    string firstName = dataReader[2].ToString();
+                    string middleName = dataReader[3].ToString();
+                    string lastName = dataReader[4].ToString();
+                    string suffix = dataReader[5].ToString();
+                    string officeGovernment = dataReader[6].ToString();
+                    string officeBranch = dataReader[7].ToString();
+                    string officeState = dataReader[8].ToString();
+                    string officeTitle = dataReader[9].ToString();
+                    string party = dataReader[10].ToString();
+                    long twitterId = Convert.ToInt64(dataReader[11]);
+                    string twitterScreenName = dataReader[12].ToString();
 
                     Name name = new Name(firstName, middleName, lastName, suffix);
                     Office office = new Office(officeGovernment, officeBranch, officeState, officeTitle);
 
-                    officials.Add(new PublicOfficial(tweepicsId, name, office, party, twitterId, twitterScreenName));
+                    officials.Add(new PublicOfficial(tweepicsId, incumbent, name, office, party, twitterId, twitterScreenName));
                 }
                 dataReader.Close();
                 connection.Close();
@@ -70,28 +76,29 @@ namespace Tweepics.Core.Database
 
                 if (oneLineOfData.Any())
                 {
-                    string firstName = oneLineOfData[0];
-                    string middleName = oneLineOfData[1];
-                    string lastName = oneLineOfData[2];
-                    string suffix = oneLineOfData[3];
-                    string officeGovernment = oneLineOfData[4];
-                    string officeBranch = oneLineOfData[5];
-                    string officeState = oneLineOfData[6];
-                    string officeTitle = oneLineOfData[7];
-                    string party = oneLineOfData[8];
+                    string incumbent = oneLineOfData[0];
+                    string firstName = oneLineOfData[1];
+                    string middleName = oneLineOfData[2];
+                    string lastName = oneLineOfData[3];
+                    string suffix = oneLineOfData[4];
+                    string officeGovernment = oneLineOfData[5];
+                    string officeBranch = oneLineOfData[6];
+                    string officeState = oneLineOfData[7];
+                    string officeTitle = oneLineOfData[8];
+                    string party = oneLineOfData[9];
                     long twitterId = 0;
 
-                    if (oneLineOfData[9] != string.Empty)
+                    if (oneLineOfData[10] != string.Empty)
                     {
-                        twitterId = Convert.ToInt64(oneLineOfData[9]);
+                        twitterId = Convert.ToInt64(oneLineOfData[10]);
                     }
 
-                    string twitterScreenName = oneLineOfData[10];
+                    string twitterScreenName = oneLineOfData[11];
 
                     Name name = new Name(firstName, middleName, lastName, suffix);
                     Office office = new Office(officeGovernment, officeBranch, officeState, officeTitle);
 
-                    officials.Add(new PublicOfficial(name, office, party, twitterId, twitterScreenName));
+                    officials.Add(new PublicOfficial(incumbent, name, office, party, twitterId, twitterScreenName));
                 }
                 else
                     break;
@@ -99,9 +106,6 @@ namespace Tweepics.Core.Database
             return officials;
         }
 
-            public PublicOfficialReader(string mySqlConnectionString)
-        {
-            _connectionString = mySqlConnectionString;
-        }
+
     }
 }

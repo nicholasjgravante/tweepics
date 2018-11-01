@@ -23,15 +23,16 @@ namespace Tweepics.Core.Database
                     MySqlCommand cmd = new MySqlCommand
                     {
                         Connection = connection,
-                        CommandText = @"INSERT INTO representatives (tweepics_id, first_name, middle_name, 
+                        CommandText = @"INSERT INTO representatives (tweepics_id, incumbent, first_name, middle_name, 
                                         last_name, suffix, office_government, office_branch, office_state, 
                                         office_title, party, twitter_id, twitter_screen_name)
-                                        VALUES (@tweepics_id, @first_name, @middle_name, @last_name, @suffix, 
+                                        VALUES (@tweepics_id, @incumbent, @first_name, @middle_name, @last_name, @suffix, 
                                         @office_government, @office_branch, @office_state, @office_title, 
                                         @party, @twitter_id, @twitter_screen_name)
-                                        ON DUPLICATE KEY UPDATE middle_name=@middle_name"
+                                        ON DUPLICATE KEY UPDATE incumbent=@incumbent"
                     };
                     cmd.Parameters.Add("@tweepics_id", MySqlDbType.VarChar).Value = officialTweepicsId;
+                    cmd.Parameters.Add("@incumbent", MySqlDbType.VarChar).Value = official.Incumbent;
                     cmd.Parameters.Add("@first_name", MySqlDbType.VarChar).Value = official.Name.First;
                     cmd.Parameters.Add("@middle_name", MySqlDbType.VarChar).Value = official.Name.Middle;
                     cmd.Parameters.Add("@last_name", MySqlDbType.VarChar).Value = official.Name.Last;

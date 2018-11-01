@@ -5,6 +5,7 @@ namespace Tweepics.Core.Models
     public class PublicOfficial
     {
         public string TweepicsId { get; set; }
+        public string Incumbent { get; set; } // Y - currently holds office; N - no longer holds office
         public Name Name { get; set; }
         public Office Office { get; set; }
         public string Party { get; set; }
@@ -13,13 +14,14 @@ namespace Tweepics.Core.Models
 
         public PublicOfficial () { }
 
-        public PublicOfficial(Name name, Office office, string party, long twitterId, string twitterScreenName)
-            : this ("", name, office, party, twitterId, twitterScreenName) { }
+        public PublicOfficial(string incumbent, Name name, Office office, string party, long twitterId, string twitterScreenName)
+            : this ("", incumbent, name, office, party, twitterId, twitterScreenName) { }
 
-        public PublicOfficial(string tweepicsId, Name name, Office office, string party, long twitterId, 
-                              string twitterScreenName)
+        public PublicOfficial(string tweepicsId, string incumbent, Name name, Office office, 
+                              string party, long twitterId, string twitterScreenName)
         {
             TweepicsId = tweepicsId;
+            Incumbent = incumbent;
             Name = name;
             Office = office;
             Party = party;
